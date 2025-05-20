@@ -3,26 +3,26 @@ const router = express.Router();
 const axios = require('axios');
 
 router.post('/api/generate-file', async (req, res) => {
-  const { repo, path, name } = req.body;
+  const { repo, path, name, content } = req.body; // ✅ Get content from frontend
   const user = req.user;
 
   if (!user) return res.status(401).json({ error: 'Not authenticated' });
 
   try {
-    const fileType = path.includes('components') ? 'component' : 'page';
-    const content = generateBoilerplate(name, fileType);
     const fileName = `${name}.js`;
 
-    // Remove leading slash from path if present
+    // Clean the path (remove leading slash if needed)
     const cleanedPath = path.startsWith('/') ? path.slice(1) : path;
     const fullPath = `${cleanedPath}/${fileName}`;
 
+    // Encode the content for GitHub
     const encodedContent = Buffer.from(content).toString('base64');
 
+    // Create the file in GitHub
     const response = await axios.put(
       `https://api.github.com/repos/${user.username}/${repo}/contents/${fullPath}`,
       {
-        message: `Add ${fileType} ${fileName}`,
+        message: `Add file ${fileName}`,
         content: encodedContent,
       },
       {
@@ -40,34 +40,5 @@ router.post('/api/generate-file', async (req, res) => {
   }
 });
 
-function generateBoilerplate(name, type) {
-  if (type === 'component') {
-    return `import React from 'react';
-
-const ${name} = () => {
-  return (
-    <div>
-      ${name} Component
-    </div>
-  );
-};
-
-export default ${name};
-`;
-  } else {
-    return `import React from 'react';
-
-const ${name} = () => {
-  return (
-    <main>
-      <h1>${name} Page</h1>
-    </main>
-  );
-};
-
-export default ${name};
-`;
-  }
-}
-
 module.exports = router;
+

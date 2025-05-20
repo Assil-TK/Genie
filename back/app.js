@@ -11,6 +11,8 @@ const createComponentsRouter = require('./routes/createcomponents');
 const commitDeployRouter = require('./routes/commit-deploy');
 const generateFileRouter = require('./routes/generateFile');
 const deleteFileRouter = require('./routes/deleteFile');
+const fileCreateWriter = require('./routes/fileCreateWriter');
+
 
 dotenv.config();
 const app = express();
@@ -41,7 +43,7 @@ app.use('/api/reset-filecontent', resetFileContentRoute);
 app.use(createComponentsRouter);
 app.use(generateFileRouter);
 app.use('/api', deleteFileRouter);
-
+app.use(fileCreateWriter);
 
 
 // GitHub Strategy
@@ -63,6 +65,8 @@ passport.deserializeUser((user, done) => {
 });
 
 app.use('/api', commitDeployRouter);
+
+
 // OAuth routes
 app.get('/auth/github', passport.authenticate('github', { scope: ['repo'] }));
 

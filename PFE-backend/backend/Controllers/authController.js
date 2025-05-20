@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
     });
 
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     await sendVerificationEmail(user.email, token);
@@ -127,7 +127,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     res.json({ message: "Connexion réussie", token });

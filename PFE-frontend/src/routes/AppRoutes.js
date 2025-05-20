@@ -42,6 +42,8 @@ import RepoExplorer from '../pages/RepoExplorer'
 import EditFile from '../pages/EditFile'; // Import the EditFile page
 import FileContent from '../pages/filecontent';
 import GeneratePage from '../pages/GeneratePage';
+import FileContent2 from '../pages/filecontent2';
+
 
 const DynamicPage = () => {
   const { route } = useParams();
@@ -114,6 +116,8 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/edit-file" element={<EditFile />} /> {/* Add the EditFile route */}
             <Route path="/filecontent" element={<FileContent />} /> {/* ✅ Route added */}
             <Route path="/generate" element={<GeneratePage />} />
+            <Route path="/filecontent2" element={<FileContent2 />} />
+
 
           </Routes>
         </ProjectProvider>
