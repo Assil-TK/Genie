@@ -5,6 +5,10 @@ const fileController = require('../Controllers/fileController');
 const aiController = require("../Controllers/aiController");
 
 router.get('/list', verifyToken, fileController.listPages);
+router.get('/paths', verifyToken, fileController.listPagePaths);
+
+
+
 router.get("/listDash", fileController.listFormattedPages);
 
 router.get('/:pageName', verifyToken, fileController.readPage); //utilisé modif

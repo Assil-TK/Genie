@@ -411,6 +411,26 @@ export const fetchFileList = async () => {
   }
 };
 
+export const fetchFilePaths = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(`${API_URL}/api/files/paths`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; // [{ name, path }]
+  } catch (error) {
+    console.error("Erreur récupération chemins:", error);
+    throw new Error("Impossible de charger les chemins.");
+  }
+};
+
+
+
+
+
 // Lire un fichier
 export const getPageCode = async (pageName) => {
   try {
@@ -446,13 +466,6 @@ export const generateCodeFromPrompt = async (prompt) => {
   }
 };
 
-//creation d'un fichier 
-// export const createFile = async ({ pageName, code }) => {
-//   return axios.post(`${API_URL}/api/files/createFile`, {
-//     pageName,
-//     code
-//   }, getAuthHeaders());
-// };
 
 export const generateEdit = async ({ fileName, fileContent, instruction }) => {
   try {
@@ -501,6 +514,8 @@ export const savePageCode = async (pageName, code) => {
     throw new Error("Impossible de sauvegarder le code.");
   }
 };
+
+
 //api ia creation
 
 export const createFile = async ({ pageName, code, projectId }) => {

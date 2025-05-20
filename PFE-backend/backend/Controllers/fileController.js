@@ -27,6 +27,36 @@ exports.listPages = async (req, res) => {
     res.status(500).json({ error: "Erreur lecture dossier" });
   }
 };
+
+// Nouvelle fonction pour retourner { name, path }
+exports.listPagePaths = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const pagesPath = await getPagesPath(userId);
+
+    if (!pagesPath || !fs.existsSync(pagesPath)) {
+      return res.status(404).json({ error: "Dossier pages introuvable" });
+    }
+
+    const files = fs.readdirSync(pagesPath);
+    const jsFiles = files.filter(f => f.endsWith(".js"));
+
+    const result = jsFiles.map(file => ({
+      name: file.replace('.js', ''),
+      path: `${pagesPath}/${file}` // or any format you want to return
+    }));
+
+    res.json(result);
+  } catch (error) {
+    console.error("Erreur dans listPagePaths:", error);
+    res.status(500).json({ error: "Erreur lecture dossier" });
+  }
+};
+
+
+
+
+
 //lit le code d'un ficher 
 exports.readPage = async (req, res) => {
   const pagesPath = await getPagesPath(req.user.id);

@@ -1,73 +1,81 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const fse = require('fs-extra'); // npm install fs-extra
 const unzipper = require('unzipper');
 
 const Projet = require('../Models/projet');
+const { setActiveProjectPath } = require('../utils/projectPathHelper');
 
-const {setActiveProjectPath} = require('../utils/projectPathHelper');
+// === UPLOAD CONFIG ===
 const uploadPath = path.join(__dirname, '../uploads/projects');
-
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const timestamp = Date.now();
     const safeName = file.originalname.replace(/[^a-zA-Z0-9.\-_]/g, '_');
     cb(null, `${safeName}`);
   }
 });
+
 const upload = multer({ storage, limits: { fileSize: 1000 * 1024 * 1024 } });
 
 exports.uploadMiddleware = upload.single('projectZip');
 
-// Traitement du zip après upload
+// === HANDLE PROJECT UPLOAD ===
 exports.handleUpload = async (req, res) => {
   const file = req.file;
-
-  const userId = req.user?.id|| null;
+  const userId = req.user?.id || null;
   const username = req.user?.username || "inconnu";
 
   if (!file) return res.status(400).json({ error: "Fichier non fourni." });
 
-  //const extractDir = path.join(uploadPath, path.parse(file.filename).name);
   const projectName = path.parse(file.filename).name;
+
+  // === BACKEND PATH ===
   const userDir = path.join(__dirname, '../uploads', `user_${userId}`);
-  const projectDir = path.join(userDir, 'projects')
-  const extractDir = path.join(projectDir, projectName);
-// Créer les dossiers si nécessaires
-fs.mkdirSync(projectDir, { recursive: true });
+  const backendProjectDir = path.join(userDir, 'projects');
+  const backendExtractDir = path.join(backendProjectDir, projectName);
+
+  // === FRONTEND PATH ===
+  const frontendExtractDir = path.join(__dirname, '../../../PFE-frontend/src/importedproject', `user_${userId}`, projectName);
+
+  // Create necessary directories
+  fs.mkdirSync(backendProjectDir, { recursive: true });
+  fs.mkdirSync(frontendExtractDir, { recursive: true });
 
   try {
-    // Extraction du zip
+    // 1. Extract to backend
     await fs.createReadStream(file.path)
-      .pipe(unzipper.Extract({ path: extractDir }))
+      .pipe(unzipper.Extract({ path: backendExtractDir }))
       .promise();
 
-    // Supprimer le fichier zip après extraction (optionnel mais propre)
+    // 2. Copy to frontend
+    await fse.copy(backendExtractDir, frontendExtractDir);
+
+    // 3. Delete zip file
     fs.unlinkSync(file.path);
 
-    // Vérification que le dossier src/pages existe
-         const pagesFolder = path.join(extractDir, 'src', 'pages');
-         if (!fs.existsSync(pagesFolder)) {
-          return res.status(400).json({ error: "Le dossier 'src/pages' est manquant dans le projet." });
-         }
+    // 4. Check if src/pages exists
+    const pagesFolder = path.join(backendExtractDir, 'src', 'pages');
+    if (!fs.existsSync(pagesFolder)) {
+      return res.status(400).json({ error: "Le dossier 'src/pages' est manquant dans le projet." });
+    }
 
-    // Enregistrer dynamiquement le chemin du projet
-    //setActiveProjectPath(extractDir);
-
+    // 5. Save project info in DB
     const createdProject = await Projet.create({
       name: projectName,
-      path: extractDir, 
+      path: backendExtractDir,
       uploadedBy: username,
       userId: userId,
     });
 
-    res.json({ message: "Projet uploadé avec succès et dossier 'src/pages' détecté." });
+    res.json({ message: "Projet uploadé et copié avec succès. Dossier 'src/pages' détecté." });
   } catch (error) {
     console.error("Erreur traitement projet:", error);
     res.status(500).json({ error: "Erreur lors du traitement du projet." });
