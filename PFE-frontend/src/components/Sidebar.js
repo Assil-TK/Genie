@@ -15,13 +15,32 @@ import CommentIcon from '@mui/icons-material/Comment';
 import React from "react";
 
 import { useNavigate } from 'react-router-dom';
-
+import { removeFromFrontend } from "../services/api"; // Adjust the path if needed
 
 const Sidebar = ({ open }) => {
     const navigate = useNavigate();
-    const handleNavigation = (path) => {
+
+    const pathsThatNeedCleanup = [
+        "/admin/createFile",
+        "/admin/editfile",
+        "/admin/delete",
+        "/admin/upload",
+        "/admin/deploy"
+    ];
+
+    const handleNavigation = async (path) => {
+        if (pathsThatNeedCleanup.includes(path)) {
+            try {
+                await removeFromFrontend();
+                console.log("Composant frontend supprimé avec succès.");
+            } catch (error) {
+                console.error("Erreur suppression composant frontend :", error.message);
+            }
+        }
+
         navigate(path);
-    }
+    };
+
     return (
         <Drawer
             variant="permanent"
@@ -44,20 +63,18 @@ const Sidebar = ({ open }) => {
             <List sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginTop: '64px' }}>
                 {[
                     { text: "Tableau de bord", icon: <DashboardIcon />, path: "/admin/dashboard" },
-                    { text: "Importer un projet", icon: <FileUploadIcon/>, path:"/admin/upload"},
+                    { text: "Importer un projet", icon: <FileUploadIcon />, path: "/admin/upload" },
                     { text: "Création", icon: <AddIcon />, path: "/admin/createFile" },
-                    { text: "Modification", icon: <EditIcon />, path: "/admin/editfile"  },
+                    { text: "Modification", icon: <EditIcon />, path: "/admin/editfile" },
                     { text: "Télécharger", icon: <FileDownloadIcon />, path: "/admin/download" },
-                    { text: "Deployer", icon: <CloudUploadIcon/>, path: "/admin/deploy"},
-                    { text: "Supression", icon: < FolderDeleteIcon/>, path:"/admin/delete" },
-                    { text: "Avis", icon: <CommentIcon/>, path:"/admin/avis"},
-                    { text: "Historique", icon: <HistoryIcon /> , path:"/admin/history"},
-                    { text: "dashboard", icon: <DashboardIcon/>, path:"/admin/tableau"},
-                    { text: "journal d'activité", icon: <WorkHistoryIcon/>, path:"/admin/my-history" },
-                    { text: "gestion des versions", icon: <ManageHistoryIcon/>, path:"/admin/version-manager"},
-                    { test: "gestion des admins", icon: <GroupIcon/>, path:"/admins"},
-
-                   
+                    { text: "Deployer", icon: <CloudUploadIcon />, path: "/admin/deploy" },
+                    { text: "Supression", icon: <FolderDeleteIcon />, path: "/admin/delete" },
+                    { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
+                    { text: "Historique", icon: <HistoryIcon />, path: "/admin/history" },
+                    { text: "dashboard", icon: <DashboardIcon />, path: "/admin/tableau" },
+                    { text: "journal d'activité", icon: <WorkHistoryIcon />, path: "/admin/my-history" },
+                    { text: "gestion des versions", icon: <ManageHistoryIcon />, path: "/admin/version-manager" },
+                    { text: "gestion des admins", icon: <GroupIcon />, path: "/admins" },
                 ].map((item, index) => (
                     <Tooltip title={!open ? item.text : ""} placement="right" key={index}>
                         <ListItem button onClick={() => handleNavigation(item.path)}>

@@ -427,6 +427,24 @@ export const fetchFilePaths = async () => {
   }
 };
 
+export const syncToFrontend = async ({ relativePath, content }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(`${API_URL}/api/files/syncToFrontend`,
+      { relativePath, content },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la synchronisation avec le frontend :", error);
+    throw new Error("Échec de la synchronisation frontend.");
+  }
+};
 
 
 
@@ -514,6 +532,32 @@ export const savePageCode = async (pageName, code) => {
     throw new Error("Impossible de sauvegarder le code.");
   }
 };
+
+
+
+export const removeFromFrontend = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.post(
+      `${API_URL}/api/files/removeFromFrontend`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la suppression du composant frontend :", error);
+    throw new Error("Échec de la suppression.");
+  }
+};
+
+
+
 
 
 //api ia creation

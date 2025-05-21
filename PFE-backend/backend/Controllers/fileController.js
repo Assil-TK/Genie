@@ -53,14 +53,163 @@ exports.listPagePaths = async (req, res) => {
   }
 };
 
+// Fonction pour écrire dans le frontend à chaque modification
+exports.writeToFrontendProject = async (req, res) => {
+  let { relativePath, content } = req.body;
+  const userId = req.user?.id;
 
+  console.log("📥 Reçu du frontend :");
+  console.log("➡️ userId:", userId);
+  console.log("➡️ relativePath (raw):", relativePath);
+  console.log("➡️ content (début):", content?.slice(0, 100));
+
+  if (!userId || !relativePath || !content) {
+    console.warn("⚠️ Champs manquants (userId, relativePath, content)");
+    return res.status(400).json({ error: 'Champs manquants (userId, relativePath, content)' });
+  }
+
+  try {
+    const normalizedPath = relativePath.replace(/\\/g, "/");
+
+    const uploadsIndex = normalizedPath.indexOf("uploads/");
+    if (uploadsIndex === -1) {
+      return res.status(400).json({ error: "Le chemin ne contient pas 'uploads/'" });
+    }
+
+    const pathAfterUploads = normalizedPath.substring(uploadsIndex + "uploads/".length);
+
+    const projectDir = path.dirname(pathAfterUploads);
+    const frontendFullPath = path.join(
+      __dirname,
+      "..", "..", "..",
+      "PFE-frontend", "src", "importedproject",
+      projectDir,
+      "filecontent3.js"
+    );
+
+    console.log("📝 Chemin complet où on va écrire :", frontendFullPath);
+
+    fs.mkdirSync(path.dirname(frontendFullPath), { recursive: true });
+    fs.writeFileSync(frontendFullPath, content, "utf8");
+    console.log("✅ Écriture réussie dans le fichier.");
+
+    // 🔁 MISE À JOUR DE AppRoutes.js
+    const appRoutesPath = path.join(
+      __dirname,
+      "..", "..", "..",
+      "PFE-frontend", "src", "routes", "AppRoutes.js"
+    );
+
+    let appRoutesContent = fs.readFileSync(appRoutesPath, "utf8");
+
+    // === 1. Générer le chemin d'import propre
+    const importPathFrom = pathAfterUploads
+      .replace(/\\/g, "/")
+      .split("frontend/src/")[1] || `importedproject/${projectDir}/filecontent3`;
+    const cleanedImportPath = importPathFrom.replace(/\.js$/, "");
+    const newImportLine = `import FileContent3 from '../${cleanedImportPath}';\n`;
+
+    // Ajouter l'import seulement s'il n'existe pas déjà
+    if (!appRoutesContent.includes(newImportLine.trim())) {
+      const importRegex = /import .*? from '.*?';\n/g;
+      const importMatches = appRoutesContent.match(importRegex);
+      const lastImportIndex = importMatches
+        ? appRoutesContent.lastIndexOf(importMatches[importMatches.length - 1]) + importMatches[importMatches.length - 1].length
+        : 0;
+
+      appRoutesContent =
+        appRoutesContent.slice(0, lastImportIndex) +
+        newImportLine +
+        appRoutesContent.slice(lastImportIndex);
+      console.log("✅ Ligne d'import ajoutée.");
+    } else {
+      console.log("ℹ️ L'import existe déjà, non ajouté.");
+    }
+
+    // === 2. Ajouter le <Route> seulement s'il n'existe pas
+    const newRouteLine = `\n            <Route path="/filecontent3" element={<FileContent3 />} />`;
+    if (!appRoutesContent.includes(`<Route path="/filecontent3"`)) {
+      const routesCloseTag = "</Routes>";
+      const routesIndex = appRoutesContent.indexOf(routesCloseTag);
+      if (routesIndex !== -1) {
+        appRoutesContent =
+          appRoutesContent.slice(0, routesIndex) +
+          newRouteLine +
+          "\n" +
+          appRoutesContent.slice(routesIndex);
+        console.log("✅ Route ajoutée dans AppRoutes.");
+      } else {
+        console.warn("⚠️ Balise </Routes> non trouvée, insertion impossible.");
+      }
+    } else {
+      console.log("ℹ️ La route existe déjà, non ajoutée.");
+    }
+
+    fs.writeFileSync(appRoutesPath, appRoutesContent, "utf8");
+    console.log("✅ AppRoutes.js mis à jour.");
+
+    return res.json({ message: "Fichier et AppRoutes mis à jour avec succès" });
+
+  } catch (error) {
+    console.error("❌ Erreur lors de l'écriture :", error);
+    return res.status(500).json({ error: "Erreur d'écriture dans le frontend" });
+  }
+};
+
+
+
+
+exports.removeFromFrontendRoutes = async (req, res) => {
+  const componentName = "FileContent3";
+  const routePath = "/filecontent3";
+
+  try {
+    const appRoutesPath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "PFE-frontend",
+      "src",
+      "routes",
+      "AppRoutes.js"
+    );
+
+    let appRoutesContent = fs.readFileSync(appRoutesPath, "utf8");
+
+    const lines = appRoutesContent.split("\n");
+
+    // Filter out the import and route line
+    const updatedLines = lines.filter((line) => {
+      const trimmed = line.trim();
+
+      // Remove import line like: import FileContent3 from ...
+      if (trimmed.startsWith(`import ${componentName} from`)) return false;
+
+      // Remove route line like: <Route path="/filecontent3" element={<FileContent3 />} />
+      if (trimmed === `<Route path="${routePath}" element={<${componentName} />} />`) return false;
+
+      return true;
+    });
+
+    // Join back and write to file
+    fs.writeFileSync(appRoutesPath, updatedLines.join("\n"), "utf8");
+
+    console.log("🗑️ Import et route supprimés avec succès.");
+    return res.json({ message: `Import et route de ${componentName} supprimés.` });
+
+  } catch (error) {
+    console.error("❌ Erreur lors de la suppression :", error);
+    return res.status(500).json({ error: "Erreur lors de la modification de AppRoutes.js" });
+  }
+};
 
 
 
 //lit le code d'un ficher 
 exports.readPage = async (req, res) => {
   const pagesPath = await getPagesPath(req.user.id);
-  const filePath = path.join(pagesPath, `${req.params.pageName}.js`);  
+  const filePath = path.join(pagesPath, `${req.params.pageName}.js`);
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'Fichier non trouvé' });
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -107,7 +256,7 @@ exports.savePageCode = async (req, res) => {
       console.error('Erreur lors de la sauvegarde du fichier:', err);
       return res.status(500).json({ error: 'Erreur lors de la sauvegarde du fichier.' });
     }
-   try{
+    try {
       await Operation.create({
         operationType: 'modification',
         userId: userId,
@@ -115,18 +264,19 @@ exports.savePageCode = async (req, res) => {
         fileName: `${pageName}.js`,
         projectId: projectId,
       });
-    return res.json({ message: 'Code mis à jour avec succès et operation enregistré !' });
-  } catch (error) {
-    console.error('Erreur lors de l\'enregistrement de l\'opération:', error);
-    return res.status(500).json({ error: 'Code mis à jour mais erreur lors de l\'enregistrement de l\'opération.' });
-  }
+      return res.json({ message: 'Code mis à jour avec succès et operation enregistré !' });
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement de l\'opération:', error);
+      return res.status(500).json({ error: 'Code mis à jour mais erreur lors de l\'enregistrement de l\'opération.' });
+    }
   });
 };
+
 
 //pour la modification
 exports.generateCode = async (req, res) => {
   const { prompt } = req.body;
-  console.log("Reçu pour génération IA:", {prompt});
+  console.log("Reçu pour génération IA:", { prompt });
 
   if (!prompt) {
     return res.status(400).json({ error: 'Le prompt est requis.' });
@@ -151,8 +301,8 @@ exports.generateCode = async (req, res) => {
 
 exports.createFile = async (req, res) => {
   const { pageName, code, projectId } = req.body;
-  const userId = req.user?.id ;
-  console.log("Utilisateur connecté :", userId); 
+  const userId = req.user?.id;
+  console.log("Utilisateur connecté :", userId);
   const userName = req.user?.username || "Inconnu";
 
   if (!pageName || !code || !projectId) {
@@ -171,7 +321,7 @@ exports.createFile = async (req, res) => {
 
     await File.create({
       fileName: `${pageName}.js`,
-      route: `/pages/${pageName}`,  
+      route: `/pages/${pageName}`,
       userId: userId,
       username: userName,
       projectId: projectId,
@@ -194,8 +344,8 @@ exports.createFile = async (req, res) => {
 };
 
 exports.listFormattedPages = async (req, res) => {
-  try{
-  const pagesPath = await getPagesPath(req.user.id);
+  try {
+    const pagesPath = await getPagesPath(req.user.id);
 
     const files = fs.readdirSync(pagesPath);
 
@@ -210,7 +360,7 @@ exports.listFormattedPages = async (req, res) => {
     });
 
     res.json(formattedFiles);
-  }catch (err) {
+  } catch (err) {
     console.error("Erreur listFormattedPages:", err);
     res.status(500).json({ error: "Erreur lecture dossier." });
   }

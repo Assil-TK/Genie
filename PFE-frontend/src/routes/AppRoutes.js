@@ -1,3 +1,4 @@
+import FileContent3 from '../importedproject/user_1/projects/test2/src/pages/filecontent3';
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 // import Navbar from "../client/Navbar";  <-- Removed this import
@@ -117,9 +118,18 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/filecontent" element={<FileContent />} /> {/* ✅ Route added */}
             <Route path="/generate" element={<GeneratePage />} />
             <Route path="/filecontent2" element={<FileContent2 />} />
+            
+
+          
 
 
-          </Routes>
+
+
+
+
+
+            <Route path="/filecontent3" element={<FileContent3 />} />
+</Routes>
         </ProjectProvider>
       </Box>
     </Box>

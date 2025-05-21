@@ -43,7 +43,7 @@ exports.handleUpload = async (req, res) => {
   const backendExtractDir = path.join(backendProjectDir, projectName);
 
   // === FRONTEND PATH ===
-  const frontendExtractDir = path.join(__dirname, '../../../PFE-frontend/src/importedproject', `user_${userId}`, projectName);
+  const frontendExtractDir = path.join(__dirname, '../../../PFE-frontend/src/importedproject', `user_${userId}`, 'projects', projectName);
 
   // Create necessary directories
   fs.mkdirSync(backendProjectDir, { recursive: true });
@@ -55,8 +55,26 @@ exports.handleUpload = async (req, res) => {
       .pipe(unzipper.Extract({ path: backendExtractDir }))
       .promise();
 
-    // 2. Copy to frontend
-    await fse.copy(backendExtractDir, frontendExtractDir);
+    // 2. Copy to frontend (excluding unwanted files)
+    await fse.copy(backendExtractDir, frontendExtractDir, {
+      filter: (src) => {
+        const base = path.basename(src).toLowerCase();
+        return ![
+          'node_modules',
+          'package.json',
+          'package-lock.json',
+          'yarn.lock',
+          '.eslintrc',
+          '.eslintrc.js',
+          '.babelrc',
+          'babel.config.js',
+          'tsconfig.json',
+          'jsconfig.json',
+          'README.md',
+          'public'
+        ].includes(base);
+      }
+    });
 
     // 3. Delete zip file
     fs.unlinkSync(file.path);

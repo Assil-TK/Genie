@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { generateCodeFromPrompt, getPageCode, savePageCode } from '../services/api';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+    generateCodeFromPrompt,
+    getPageCode,
+    savePageCode,
+    syncToFrontend,
+    fetchFilePaths
+} from '../services/api';
 import { Box, Typography, TextField, Button } from '@mui/material';
+import PreviewBox3 from './PreviewBox3';
 
 const EditablePreview = ({ pageName }) => {
     const [instructions, setInstructions] = useState('');
@@ -8,9 +15,43 @@ const EditablePreview = ({ pageName }) => {
     const [modifiedCode, setModifiedCode] = useState('');
     const [error, setError] = useState(null);
     const [successMsg, setSuccessMsg] = useState(null);
+    const [filePaths, setFilePaths] = useState([]);
+    const [loading, setLoading] = useState(false); // ✅ Added loading state
+
+    useEffect(() => {
+        const loadPaths = async () => {
+            try {
+                const paths = await fetchFilePaths();
+                setFilePaths(paths);
+            } catch (err) {
+                console.error("Erreur récupération chemins :", err);
+                setError("Impossible de charger les chemins de fichiers.");
+            }
+        };
+        loadPaths();
+    }, []);
+
+    const getExactPath = useCallback(() => {
+        if (!filePaths.length || !pageName) return null;
+        const normalized = pageName.toLowerCase();
+
+        const match = filePaths.find(f => {
+            const fileName = f.name.toLowerCase();
+            return (
+                fileName === normalized ||
+                fileName === normalized + '.js' ||
+                fileName === normalized + '.jsx' ||
+                fileName.replace(/\.[^/.]+$/, '') === normalized
+            );
+        });
+
+        return match ? match.path : null;
+    }, [filePaths, pageName]);
 
     useEffect(() => {
         const loadCode = async () => {
+            if (!filePaths.length) return;
+
             setError(null);
             try {
                 const res = await getPageCode(pageName);
@@ -19,43 +60,76 @@ const EditablePreview = ({ pageName }) => {
                 setModifiedCode(content);
                 setSuccessMsg(null);
                 setInstructions('');
+
+                const exactPath = getExactPath();
+                if (exactPath) {
+                    await syncToFrontend({
+                        relativePath: exactPath,
+                        content,
+                    });
+                } else {
+                    setError(`Chemin exact introuvable pour la page "${pageName}".`);
+                }
             } catch (err) {
                 console.error("Erreur chargement du code :", err);
                 setError("Impossible de charger le code de la page.");
             }
         };
-        if (pageName) loadCode();
-    }, [pageName]);
+
+        if (pageName && filePaths.length) {
+            loadCode();
+        }
+    }, [pageName, filePaths, getExactPath]);
 
     const handleGenerateCode = async () => {
-        setError(null);
-        setSuccessMsg(null);
+    setError(null);
+    setSuccessMsg(null);
 
-        if (!instructions || !originalCode) {
-            setError("Code original ou instructions manquants.");
-            return;
-        }
+    if (!instructions || !modifiedCode) {
+        setError("Code actuel ou instructions manquants.");
+        return;
+    }
 
-        try {
-            const prompt = `
+    setLoading(true); // ✅ Start loading
+    try {
+        const prompt = `
 Voici un code d'une application React. Veuillez modifier ce code en fonction des instructions suivantes.
 Instructions :
 ${instructions}
-Code original :
-${originalCode} 
+Code actuel :
+${modifiedCode}
 `;
-            const newCode = await generateCodeFromPrompt(prompt);
-            if (!newCode) {
-                setError("Réponse invalide de l'API IA.");
-                return;
-            }
-            setModifiedCode(newCode);
-            setSuccessMsg("Code généré avec succès !");
-        } catch (err) {
-            console.error("Erreur IA :", err);
-            setError("Erreur lors de la génération avec l'IA.");
+
+        const newCode = await generateCodeFromPrompt(prompt);
+        if (!newCode) {
+            setError("Réponse invalide de l'API IA.");
+            return;
         }
-    };
+
+        setModifiedCode(newCode);
+        setSuccessMsg("Code généré avec succès !");
+
+        const exactPath = getExactPath();
+        if (exactPath) {
+            try {
+                await syncToFrontend({
+                    relativePath: exactPath,
+                    content: newCode,
+                });
+            } catch (err) {
+                console.error("Erreur de synchronisation post-génération :", err);
+                setError("Erreur de synchronisation après génération du code.");
+            }
+        } else {
+            setError(`Chemin exact introuvable pour la page "${pageName}".`);
+        }
+    } catch (err) {
+        console.error("Erreur IA :", err);
+        setError("Erreur lors de la génération avec l'IA.");
+    } finally {
+        setLoading(false); // ✅ End loading
+    }
+};
 
     const handleSave = async () => {
         try {
@@ -82,29 +156,85 @@ ${originalCode}
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
                 <Button
                     onClick={handleGenerateCode}
-                    disabled={!originalCode || !instructions}
+                    disabled={!originalCode || !instructions || loading}
                     variant="contained"
-                    sx={{ borderRadius: '20px', padding: '10px 30px', backgroundColor: "#1B374C" }}
+                    sx={{
+                        borderRadius: '20px',
+                        padding: '10px 30px',
+                        backgroundColor: "#1B374C"
+                    }}
                 >
-                    Générer via IA
+                    {loading ? 'Processing...' : 'Générer via IA'}
                 </Button>
             </Box>
+
             {error && <div style={{ color: 'red', marginTop: '1rem' }}>{error}</div>}
             {successMsg && <div style={{ color: 'green', marginTop: '1rem' }}>{successMsg}</div>}
+
             <Typography variant="h6" sx={{ marginTop: '2rem' }}>Contenu du fichier</Typography>
-            <TextField
-                fullWidth
-                multiline
-                minRows={20}
-                value={modifiedCode}
-                onChange={(e) => setModifiedCode(e.target.value)}
-                sx={{ marginTop: '1rem', fontFamily: 'monospace' }}
-            />
+
+            <Box sx={{ display: 'flex', gap: '2rem', marginTop: '1rem', height: '600px', width: '100%' }}>
+                <Box
+                    sx={{
+                        resize: 'horizontal',
+                        overflow: 'auto',
+                        minWidth: '400px',
+                        maxWidth: '75%',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        padding: '0.5rem',
+                    }}
+                >
+                    <textarea
+                        value={modifiedCode}
+                        onChange={async (e) => {
+                            const newValue = e.target.value;
+                            setModifiedCode(newValue);
+                            setLoading(true); // ✅ Start loading during auto-sync
+                            try {
+                                const exactPath = getExactPath();
+                                if (!exactPath) {
+                                    setError(`Chemin exact introuvable pour la page "${pageName}".`);
+                                    return;
+                                }
+                                await syncToFrontend({
+                                    relativePath: exactPath,
+                                    content: newValue,
+                                });
+                            } catch (err) {
+                                console.error("Erreur de synchronisation automatique :", err);
+                                setError("Erreur de synchronisation automatique.");
+                            } finally {
+                                setLoading(false); // ✅ End loading
+                            }
+                        }}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            resize: 'none',
+                            fontFamily: 'monospace',
+                            whiteSpace: 'pre',
+                            overflow: 'auto',
+                            border: 'none',
+                            outline: 'none',
+                        }}
+                    />
+                </Box>
+
+                <Box sx={{ flex: 1, height: '100%', overflow: 'auto' }}>
+                    <PreviewBox3 />
+                </Box>
+            </Box>
+
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
                 <Button
                     onClick={handleSave}
                     variant="contained"
-                    sx={{ borderRadius: '20px', padding: '10px 30px', backgroundColor: "#F39325" }}
+                    sx={{
+                        borderRadius: '20px',
+                        padding: '10px 30px',
+                        backgroundColor: "#F39325"
+                    }}
                 >
                     Sauvegarder les modifications
                 </Button>

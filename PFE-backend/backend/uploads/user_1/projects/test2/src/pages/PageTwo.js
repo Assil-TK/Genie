@@ -2,20 +2,23 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 
-function PageTwo() {
+const PageTwo = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: "20px", textAlign: "center", backgroundColor: "#F5F5F6", fontFamily: "Fira Sans" }}>
-      <Typography variant="h5">Page Two</Typography>
-      <Button variant="contained" color="primary" onClick={() => navigate("/")}>
-        Go to Page 1
+    <div style={{ padding: "20px", textAlign: "center", fontFamily: 'Fira Sans' }}>
+      <Typography variant="h4">Page Two</Typography>
+      <Button
+        sx={{ mt: 2, backgroundColor: '#1B374C', color: '#FFF', '&:hover': { backgroundColor: '#F39325' } }}
+        onClick={() => navigate("/")}
+      >
+        Go to Page One
       </Button>
-      <Typography variant="body1" gutterBottom>
-        Bonjour Assil et Yasmine
+      <Typography variant="body1" sx={{ mt: 1, color: '#1B374C' }}>
+        Hellooo hmdlhhhh
       </Typography>
     </div>
   );
-}
+};
 
 export default PageTwo;

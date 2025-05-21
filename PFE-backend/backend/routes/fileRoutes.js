@@ -19,6 +19,8 @@ router.post("/ai/generate",verifyToken, aiController.generateEdit);
 router.post("/ai/save",verifyToken, aiController.saveEdit);
 
 router.post('/savePageCode',verifyToken,fileController.savePageCode); //utilisé modif
+router.post('/syncToFrontend', verifyToken, fileController.writeToFrontendProject);
+router.post('/removeFromFrontend', verifyToken, fileController.removeFromFrontendRoutes);
 
 
 // Route pour créer un fichier de page
