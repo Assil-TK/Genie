@@ -17,15 +17,32 @@ const replaceImageUsages = (content, username, repoUrl, branch, selectedFile) =>
     return cleanPath;
   };
 
-  // Replace import statements (images)
+  // Step 1: Extract image imports and convert to consts
+  const imageConstLines = [];
   content = content.replace(
-    /import\s+(\w+)\s+from\s+['"](.+\.(png|jpg|jpeg|gif|svg))['"]/g,
+    /import\s+(\w+)\s+from\s+['"](.+\.(png|jpg|jpeg|gif|svg))['"]\s*;?/g,
     (match, varName, relPath) => {
       const cleanPath = adjustPath(relPath);
       const rawUrl = `https://raw.githubusercontent.com/${username}${repoPath}/${branch}/${selectedDir}/${cleanPath}`;
-      return `const ${varName} = "${rawUrl}"`;
+      imageConstLines.push(`const ${varName} = "${rawUrl}";`);
+      return ''; // Remove original import
     }
   );
+
+  // Step 2: Insert all generated consts under the last import
+  const importEndIndex = content.lastIndexOf('import');
+  const lines = content.split('\n');
+  let lastImportLine = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith('import')) lastImportLine = i;
+  }
+
+  if (imageConstLines.length > 0) {
+    lines.splice(lastImportLine + 1, 0, ...imageConstLines);
+  }
+
+  content = lines.join('\n');
 
   // Replace JSX image src
   content = content.replace(
@@ -46,7 +63,7 @@ const replaceImageUsages = (content, username, repoUrl, branch, selectedFile) =>
     }
   );
 
-  // Replace image property (object style)
+  // Replace object-style image paths
   content = content.replace(
     /image\s*:\s*["'](\/?[a-zA-Z0-9\-_/\.]+)["']/g,
     (match, relPath) => {
@@ -58,6 +75,7 @@ const replaceImageUsages = (content, username, repoUrl, branch, selectedFile) =>
 
   return content;
 };
+
 
 // Handle file changes in importedcomponents
 const processFileChange = (filePath, username, repoUrl, branch, selectedFile) => {

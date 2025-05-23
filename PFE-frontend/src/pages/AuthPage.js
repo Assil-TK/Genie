@@ -40,7 +40,7 @@ const AuthPage = ({ onLogin = () => {} }) => {
         const response = await loginUser(formData);
         localStorage.setItem("token", response.token);
         if (typeof onLogin === "function") onLogin();
-        navigate("/admin/dashboard");
+        navigate("/home");
       }
     } catch (error) {
       const errorMessage =

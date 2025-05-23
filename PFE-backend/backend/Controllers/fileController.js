@@ -89,6 +89,34 @@ exports.writeToFrontendProject = async (req, res) => {
 
     console.log("📝 Chemin complet où on va écrire :", frontendFullPath);
 
+    // === 🛠️ Correction des chemins d’assets : import dynamiques
+    const assetImportRegex = /src=["']\/assets\/([^"']+)["']/g;
+    let assetIndex = 1;
+    let importStatements = [];
+
+    content = content.replace(assetImportRegex, (match, assetPath) => {
+      const importName = `imageAsset${assetIndex++}`;
+      const relativePath = `../assets/${assetPath}`;
+      importStatements.push(`import ${importName} from "${relativePath}";`);
+      return `src={${importName}}`;
+    });
+
+    // Ajouter les imports juste après les imports React
+    if (importStatements.length > 0) {
+      const importReactRegex = /import .* from .+;\n*/g;
+      const match = content.match(importReactRegex);
+      const lastImportMatch = match ? match[match.length - 1] : '';
+      const lastImportIndex = match ? content.lastIndexOf(lastImportMatch) + lastImportMatch.length : 0;
+
+      const importBlock = importStatements.join("\n") + "\n";
+      content = content.slice(0, lastImportIndex) + importBlock + content.slice(lastImportIndex);
+    }
+
+    // 🔁 Remplacer tous les "/assets/..." restants par "../assets/..."
+    content = content.replace(/(["'])\/assets\/([^"']+)["']/g, (match, quote, path) => {
+      return `${quote}../assets/${path}${quote}`;
+    });
+
     fs.mkdirSync(path.dirname(frontendFullPath), { recursive: true });
     fs.writeFileSync(frontendFullPath, content, "utf8");
     console.log("✅ Écriture réussie dans le fichier.");
@@ -155,7 +183,6 @@ exports.writeToFrontendProject = async (req, res) => {
     return res.status(500).json({ error: "Erreur d'écriture dans le frontend" });
   }
 };
-
 
 
 

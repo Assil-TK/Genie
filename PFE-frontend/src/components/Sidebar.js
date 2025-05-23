@@ -1,4 +1,6 @@
+import React from "react";
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';  // <-- updated icon import
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import EditIcon from '@mui/icons-material/Edit';
 import HistoryIcon from '@mui/icons-material/History';
@@ -12,7 +14,6 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import CommentIcon from '@mui/icons-material/Comment';
-import React from "react";
 
 import { useNavigate } from 'react-router-dom';
 import { removeFromFrontend } from "../services/api"; // Adjust the path if needed
@@ -62,7 +63,7 @@ const Sidebar = ({ open }) => {
         >
             <List sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginTop: '64px' }}>
                 {[
-                    { text: "Tableau de bord", icon: <DashboardIcon />, path: "/admin/dashboard" },
+                    { text: "Home", icon: <HomeIcon />, path: "/home" },  // <-- updated here
                     { text: "Importer un projet", icon: <FileUploadIcon />, path: "/admin/upload" },
                     { text: "Création", icon: <AddIcon />, path: "/admin/createFile" },
                     { text: "Modification", icon: <EditIcon />, path: "/admin/editfile" },
