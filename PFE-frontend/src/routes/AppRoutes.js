@@ -6,6 +6,8 @@ import PageCreation from "../admin/PageCreation";
 import DashboardContent from "../admin/DashboardContent";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import HeaderAdmin from "../components/Header admin";
+import SidebarAdmin from "../components/Sidebar admin";
 import SultanChatbot from "../admin/SultanChatBot";
 import SultanPreview from "../admin/SultanPreview";
 import PageRenderer from "../client/PageRenderer";
@@ -41,9 +43,7 @@ import GeneratePage from '../pages/GeneratePage';
 import FileContent2 from '../pages/filecontent2';
 import Menu from '../pages/Menu';
 
-
-// ✅ API import for cleanup
-import { removeFromFrontend } from "../services/api"; // Adjust this path
+import { removeFromFrontend } from "../services/api"; // Cleanup API
 
 const DynamicPage = () => {
   const { route } = useParams();
@@ -52,10 +52,22 @@ const DynamicPage = () => {
 
 const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
   const location = useLocation();
+
   const isAdminPage = location.pathname.startsWith("/admin");
   const isLoginPage = location.pathname.startsWith("/login");
 
-  // Cleanup effect (auto-call API on route change except /filecontent3)
+  // Routes where you want to show HeaderAdmin and SidebarAdmin instead
+  const adminHeaderSidebarRoutes = [
+    "/admin/tableau",
+    "/admin/history",
+    "/admins",
+  ];
+
+  // Check if current path matches one of the special admin routes exactly or starts with them (for subpaths)
+  const useAdminHeaderSidebar = adminHeaderSidebarRoutes.some((path) =>
+    location.pathname === path || location.pathname.startsWith(path + "/")
+  );
+
   useEffect(() => {
     const currentPath = location.pathname;
 
@@ -70,8 +82,23 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {isAdminPage && (
         <>
-          <Header toggleSidebar={toggleSidebar} sx={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 10 }} />
-          <Sidebar open={sidebarOpen} />
+          {useAdminHeaderSidebar ? (
+            <>
+              <HeaderAdmin
+                toggleSidebar={toggleSidebar}
+                sx={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 10 }}
+              />
+              <SidebarAdmin open={sidebarOpen} />
+            </>
+          ) : (
+            <>
+              <Header
+                toggleSidebar={toggleSidebar}
+                sx={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 10 }}
+              />
+              <Sidebar open={sidebarOpen} />
+            </>
+          )}
         </>
       )}
 
@@ -111,18 +138,7 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/generate" element={<GeneratePage />} />
             <Route path="/home" element={<Menu />} />
             <Route path="/filecontent2" element={<FileContent2 />} />
-          
-
-
-
-
-
-
-
-
-
-
-</Routes>
+          </Routes>
         </ProjectProvider>
       </Box>
     </Box>

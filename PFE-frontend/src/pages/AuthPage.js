@@ -39,8 +39,16 @@ const AuthPage = ({ onLogin = () => {} }) => {
       } else {
         const response = await loginUser(formData);
         localStorage.setItem("token", response.token);
+
         if (typeof onLogin === "function") onLogin();
-        navigate("/home");
+
+        // Navigate based on the role from formData
+        if (formData.role === "super-admin") {
+          navigate("/admin/tableau");
+        } else {
+          // default to admin
+          navigate("/home");
+        }
       }
     } catch (error) {
       const errorMessage =
@@ -142,8 +150,8 @@ const AuthPage = ({ onLogin = () => {} }) => {
               margin="normal"
               required
             >
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="super-admin">Super Admin</MenuItem>
+              <MenuItem value="admin">Client</MenuItem>
+              <MenuItem value="super-admin">Admin</MenuItem>
             </TextField>
 
             {!isRegister && (

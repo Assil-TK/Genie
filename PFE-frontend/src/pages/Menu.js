@@ -31,15 +31,14 @@ const popScale = keyframes`
 `;
 
 const sections = [
-  { text: "Importer un projet", icon: <FileUpload />, path: "/admin/upload", color: "#D0F4DE" },
-  { text: "Création", icon: <Add />, path: "/admin/createFile", color: "#FFD6A5" },
-  { text: "Modification", icon: <Edit />, path: "/admin/editfile", color: "#FFADAD" },
-  { text: "Télécharger", icon: <FileDownload />, path: "/admin/download", color: "#FDFFB6" },
-  { text: "Deployer", icon: <CloudUpload />, path: "/admin/deploy", color: "#A0C4FF" },
-  { text: "Supression", icon: <FolderDelete />, path: "/admin/delete", color: "#BDB2FF" },
-  { text: "Avis", icon: <Comment />, path: "/admin/avis", color: "#FFC6FF" },
-  { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history", color: "#FDE2E4" },
-  { text: "Gestion des versions", icon: <ManageHistory />, path: "/admin/version-manager", color: "#F5F5DC" },
+  { text: "Importer un projet", icon: <FileUpload />, path: "/admin/upload", color: "#dde6f2" },
+  { text: "Création", icon: <Add />, path: "/admin/createFile", color: "#dde6f2" },
+  { text: "Modification", icon: <Edit />, path: "/admin/editfile", color: "#dde6f2" },
+  { text: "Télécharger", icon: <FileDownload />, path: "/admin/download", color: "#dde6f2" },
+  { text: "Deployer", icon: <CloudUpload />, path: "/admin/deploy", color: "#dde6f2" },
+  { text: "Supression", icon: <FolderDelete />, path: "/admin/delete", color: "#dde6f2" },
+  { text: "Avis", icon: <Comment />, path: "/admin/avis", color: "#dde6f2" },
+  { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history", color: "#dde6f2" },
 ];
 
 const fadeDuration = 600; // milliseconds
@@ -75,7 +74,7 @@ const MenuPage = () => {
           flexGrow: 1,
           padding: 4,
           marginLeft: '100px',
-          marginTop: '90px',
+          marginTop: '60px',
           marginRight: '70px',
           transition: 'all 0.3s ease',
         }}
@@ -89,10 +88,10 @@ const MenuPage = () => {
             color: 'orange',
             animation: `${fadeInUp} 2s ease-out`,
             textAlign: 'center',
-            marginBottom: '70px',
+            marginBottom: '60px',
           }}
         >
-          Bienvenue sur la plateforme 
+          Bienvenue sur la plateforme
         </Typography>
 
         <Grid container spacing={3} justifyContent="center">
@@ -107,20 +106,23 @@ const MenuPage = () => {
                     elevation={4}
                     sx={{
                       padding: 3,
-                      height: '100px',
+                      height: '180px',
+                      width: '250px',
                       cursor: 'pointer',
                       backgroundColor: item.color,
-                      border: '1px solid transparent',
+                      border: '2px solid #cbd5e0',
                       transition: 'transform 0.3s ease, border-color 0.3s ease',
+                      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
                       '&:hover': {
                         transform: 'scale(1.03)',
                         borderColor: 'rgba(0, 0, 0, 0.1)',
                         boxShadow: 'none',
                       },
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'flex-start',
-                      gap: 2,
+                      flexDirection: 'column', // Stack vertically
+                      alignItems: 'center',     // Center horizontally
+                      justifyContent: 'center', // Center vertically
+                      gap: 1,
                       fontFamily: 'Poppins',
                       animationName: `${popScale}`,
                       animationDuration: `${fadeDuration}ms`,
@@ -130,10 +132,19 @@ const MenuPage = () => {
                     }}
                   >
                     {item.icon}
-                    <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: '1.25rem', // Slightly bigger
+                        color: '#1B374C',
+                        textAlign: 'center',
+                        marginTop: 1,
+                      }}
+                    >
                       {item.text}
                     </Typography>
                   </Paper>
+
                 </Fade>
               </Grid>
             );
