@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PreviewBox from '../components/PreviewBox2'; // ajustez le chemin si nécessaire
 import Sidebar from '../components/Sidebar copy';
-import Header from '../components/Header';
+import Header from '../components/Header git';
 import AIFormPopup from '../components/AIFormPopup';
 
 

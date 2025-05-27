@@ -9,7 +9,7 @@ import PreviewBox from '../components/PreviewBox';
 import CommitInput from '../components/CommitInput';
 import AIPromptBox from '../components/AIPromptBox';
 import Sidebar from '../components/Sidebar copy';
-import Header from '../components/Header';
+import Header from '../components/Header git';
 
 
 const EditFile = () => {

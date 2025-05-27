@@ -5,7 +5,7 @@ import RepoSelector from '../components/RepoSelector';
 import FileTree from '../components/FileTree';
 import { Typography, Box, Divider } from '@mui/material';
 import Sidebar from '../components/Sidebar copy';
-import Header from '../components/Header';
+import Header from '../components/Header git';
 import { keyframes } from '@mui/system';
 
 const fadeInUp = keyframes`

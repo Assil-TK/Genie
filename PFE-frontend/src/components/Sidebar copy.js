@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Box,
   Drawer,
@@ -11,12 +12,16 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CommentIcon from '@mui/icons-material/Comment';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import React from "react";
-import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useNavigate } from 'react-router-dom';
 
-const Sidebar = ({ open }) => {
+const Sidebar = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const handleToggle = () => {
+    setOpen(prev => !prev);
+  };
 
   const handleNavigation = (path) => {
     if (path.startsWith('http')) {
@@ -30,25 +35,23 @@ const Sidebar = ({ open }) => {
     <Drawer
       variant="permanent"
       anchor="left"
-      open={open}
       sx={{
         width: open ? 240 : 60,
         flexShrink: 0,
-        transition: "width 0.3s ease",
         position: 'fixed',
         zIndex: 1200,
-        height: "calc(100vh - 64px)",
+        height: "100vh",
         "& .MuiDrawer-paper": {
-          width: open ? 240 : 60,
+          width: open ? 190 : 60,
           transition: "width 0.3s ease",
           overflowX: "hidden",
         },
       }}
+      onClick={handleToggle} // <- THIS IS THE KEY PART
     >
       <List sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginTop: '64px' }}>
         {[
           { text: "Repositories", icon: <GitHubIcon />, path: "/RepoExplorer" },
-          { text: "Dashboard", icon: <DashboardIcon />, path: "/admin/tableau" },
           { text: "Deployer", icon: <CloudUploadIcon />, path: "/deploygit" },
           { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
         ].map((item, index) => (
