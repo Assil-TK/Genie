@@ -21,7 +21,7 @@ const ForgotPassword = () => {
 
   return (
     <Box sx={{
-      backgroundImage: "url('/assets/images/background.jpg')",
+      backgroundImage: "url('/assets/images/webdevelopment-.png')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       height: '100vh',

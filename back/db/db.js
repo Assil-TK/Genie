@@ -1,4 +1,4 @@
-require('dotenv').config(); // charger les variables d'environnement
+require('dotenv').config(); // Load environment variables
 
 const mysql = require('mysql2/promise');
 
@@ -6,14 +6,6 @@ const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME, // utilise la variable d'env
-});
-
-// DEBUG : afficher la config de connexion (à retirer en prod)
-console.log('DB connection config:', {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD ? '***' : '(empty)',
   database: process.env.DB_NAME,
 });
 
@@ -34,6 +26,15 @@ async function insertProject(owner, repoName, vercelProjectId, deploymentUrl) {
   );
 }
 
+async function updateProjectId(owner, repoName, vercelProjectId) {
+  await pool.execute(
+    `UPDATE github_vercel_projects
+     SET vercel_project_id = ?, updated_at = NOW()
+     WHERE github_owner = ? AND github_repo_name = ?`,
+    [vercelProjectId, owner, repoName]
+  );
+}
+
 async function updateDeploymentUrl(owner, repoName, deploymentUrl) {
   await pool.execute(
     `UPDATE github_vercel_projects
@@ -43,8 +44,19 @@ async function updateDeploymentUrl(owner, repoName, deploymentUrl) {
   );
 }
 
+async function updateProjectDeploymentStatus(owner, repoName, status) {
+  await pool.execute(
+    `UPDATE github_vercel_projects
+     SET deployment_status = ?, updated_at = NOW()
+     WHERE github_owner = ? AND github_repo_name = ?`,
+    [status, owner, repoName]
+  );
+}
+
 module.exports = {
   getProject,
   insertProject,
+  updateProjectId,
   updateDeploymentUrl,
+  updateProjectDeploymentStatus
 };

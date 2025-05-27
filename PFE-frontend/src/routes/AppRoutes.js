@@ -42,6 +42,7 @@ import FileContent from '../pages/filecontent';
 import GeneratePage from '../pages/GeneratePage';
 import FileContent2 from '../pages/filecontent2';
 import Menu from '../pages/Menu';
+import DeployGit from '../pages/deploygit';
 
 import { removeFromFrontend } from "../services/api"; // Cleanup API
 
@@ -137,8 +138,14 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/filecontent" element={<FileContent />} />
             <Route path="/generate" element={<GeneratePage />} />
             <Route path="/home" element={<Menu />} />
+            <Route path="/deploygit" element={<DeployGit/>} />
             <Route path="/filecontent2" element={<FileContent2 />} />
-          </Routes>
+          
+
+
+
+
+</Routes>
         </ProjectProvider>
       </Box>
     </Box>

@@ -56,7 +56,7 @@ const AdminList = () => {
   
       setSnackbar({
         open: true,
-        message: editAdmin ? "Compte modifié avec succès" : "Admin créé avec succès",
+        message: editAdmin ? "Compte modifié avec succès" : "Client créé avec succès",
         severity: "success",
       });
   
@@ -74,7 +74,7 @@ const AdminList = () => {
   
 
   const handleDelete = async (id) => {
-    const confirmation = window.confirm("Supprimer cet admin ?");
+    const confirmation = window.confirm("Supprimer cet client ?");
     if (!confirmation) {
       return; 
     }
@@ -83,7 +83,7 @@ const AdminList = () => {
       await deleteAdmin(id);
       setSnackbar({
         open: true,
-        message: "Admin supprimé avec succès",
+        message: "Client supprimé avec succès",
         severity: "success",
       });
       loadAdmins();
@@ -101,7 +101,7 @@ const AdminList = () => {
   return (
     <Box sx={{p:10}}>
       <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins" }}>Gestion des Admins</Typography>
+        <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins" }}>Gestion des Clients</Typography>
         <Box>
           <Button variant="contained" sx={{
                         backgroundColor: "#F5F5F5",
@@ -116,7 +116,7 @@ const AdminList = () => {
                         },
                         mr:2
                     }}  onClick={handleOpenCreate}>
-            Nouvel Admin
+            Nouveau Client
           </Button>
           <Button variant="contained" sx={{
                         backgroundColor: "#F5F5F5",
@@ -138,7 +138,7 @@ const AdminList = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Admin</TableCell>
+              <TableCell>Client</TableCell>
               <TableCell>Email</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -159,7 +159,7 @@ const AdminList = () => {
       </TableContainer>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>{editAdmin ? "Modifier Admin" : "Nouveau Admin"}</DialogTitle>
+        <DialogTitle>{editAdmin ? "Modifier Client" : "Nouveau Client"}</DialogTitle>
         <DialogContent>
           <TextField
             label="Username" fullWidth margin="dense"

@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import ProjectSelector from './ProjectSelector';
 import PreviewBox3 from './PreviewBox3';
+import AIFormPopup from './AIFormPopup';
 
 
 export default function CreatePageForm() {
@@ -118,118 +119,207 @@ export default function CreatePageForm() {
         setError('o');
       }
     } else {
-      console.warn('⚠️ Aucun chemin sélectionné pour syncToFrontend');
+      console.warn(' Aucun chemin sélectionné pour syncToFrontend');
     }
   };
 
   return (
-  <Box sx={{ p: 4, maxWidth: 800, margin: '0 auto' }}>
-    <ProjectSelector />
+    <Box sx={{ p: 4, maxWidth: 800, margin: '0 auto' }}>
+      <AIFormPopup onPromptReady={(newPrompt) => setDescription(newPrompt)} />
 
-    <Typography variant="h6" fontFamily="Poppins, sans-serif" gutterBottom textAlign="center">
-      Nom de la page
-    </Typography>
-    <TextField
-      fullWidth
-      placeholder="Nom de la page"
-      value={pageName}
-      onChange={(e) => setPageName(e.target.value)}
-      sx={{ mb: 3 }}
-    />
+      {/* Sélecteur de projet */}
+      <Box sx={{ ml: -3, mb: 2 }}>
+        <ProjectSelector />
+      </Box>
 
-    <Typography variant="h6" fontFamily="Poppins, sans-serif" gutterBottom textAlign="center">
-      Décrire ce que vous souhaitez créer
-    </Typography>
 
-    <TextField
-      fullWidth
-      multiline
-      rows={4}
-      placeholder="Décris ce que tu veux voir sur la page..."
-      value={description}
-      onChange={(e) => setDescription(e.target.value)}
-      sx={{ mb: 3 }}
-    />
+      {/* Description de l’objectif */}
+      <Typography variant="h6" fontFamily="Poppins, sans-serif" gutterBottom textAlign="center" color='#1B374C'>
+        Décrire ce que vous souhaitez créer
+      </Typography>
 
-    <Box textAlign="center" mb={3}>
-      <Button
-        variant="contained"
-        onClick={handleGenerate}
-        disabled={loading}
-        sx={{
-          backgroundColor: '#F39325',
-          borderRadius: '20px',
-          px: 4,
-          py: 1.5,
-          fontWeight: 'bold',
-          '&:hover': {
-            backgroundColor: '#d87f18',
+      <TextField
+        fullWidth
+        multiline
+        rows={4}
+        placeholder="Décrivez ce que le fichier doit faire..."
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        variant="outlined"
+        InputProps={{
+          sx: {
+            padding: '1rem',
+            borderRadius: '10px',
+            fontSize: '1rem',
+            backgroundColor: '#fff',
           },
+          disableUnderline: true,
+        }}
+        sx={{
+          width: '90%',
+          marginBottom: '1rem',
+          alignSelf: 'center',
+        }}
+      />
+
+      {/* Bouton Générer */}
+      <Box textAlign="center" mb={6}>
+        <Button
+          variant="contained"
+          onClick={handleGenerate}
+          disabled={loading}
+          disableElevation
+          sx={{
+            backgroundColor: loading ? '#888' : '#1976d2',
+            color: 'white',
+            padding: '0.6rem 1.5rem',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: loading ? '#888' : '#1565c0',
+            },
+          }}
+        >
+          {loading ? 'Génération en cours...' : 'Générer avec IA'}
+        </Button>
+      </Box>
+
+      {/* Messages de succès / erreur */}
+      {successMsg && (
+        <Typography color="green" textAlign="center">{successMsg}</Typography>
+      )}
+      {error && (
+        <Typography color="red" textAlign="center">{error}</Typography>
+      )}
+
+      {/* Code généré + Preview */}
+      {code ? (
+        <>
+          <h4
+            style={{
+              marginTop: '2rem',
+              marginBottom: '2rem',
+              marginLeft: '-10rem',
+              fontFamily: 'Fira Sans, sans-serif',
+              color: 'grey',
+              textAlign: 'left',
+              width: '100%',
+            }}
+          >
+            Code généré :
+          </h4>
+
+          <div
+            style={{
+              display: 'flex',
+              width: '171%',
+              gap: '2rem',
+              marginLeft: '-14rem',
+              justifyContent: 'space-between',
+              alignItems: 'stretch',
+              flexWrap: 'nowrap',
+              marginRight: '-3rem',
+            }}
+          >
+            <textarea
+              value={code}
+              onChange={handleCodeChange}
+              rows={25}
+              style={{
+                resize: 'horizontal',
+                minWidth: '300px',
+                maxWidth: '70%',
+                height: '600px',
+                whiteSpace: 'pre',
+                fontFamily: "'Fira Code', monospace",
+                padding: '1rem',
+                borderRadius: '12px',
+                border: '1px solid #ccc',
+                background: '#f9f9fb',
+                color: '#333',
+                fontSize: '0.95rem',
+                lineHeight: '1.5',
+                overflow: 'auto',
+              }}
+            />
+            <div style={{ flex: 1, minWidth: '0' }}>
+              <PreviewBox3 />
+            </div>
+          </div>
+        </>
+      ) : (
+        <p
+          style={{
+            color: '#999',
+            fontStyle: 'italic',
+            marginTop: '4rem',
+          }}
+        >
+          Pas encore de preview disponible.
+        </p>
+      )}
+
+      {/* Création de la page */}
+      <Box
+        sx={{
+          marginTop: '3rem',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '80%',
+          marginX: 'auto',
         }}
       >
-        {loading ? (
-          <>
-            <CircularProgress size={20} sx={{ color: 'white', mr: 1 }} />
-            Génération en cours...
-          </>
-        ) : (
-          'Générer avec IA'
-        )}
-      </Button>
+        <TextField
+          fullWidth
+          placeholder="Nom de la page"
+          value={pageName}
+          onChange={(e) => setPageName(e.target.value)}
+          variant="outlined"
+          InputProps={{
+            sx: {
+              height: '42px',
+              padding: '0 1rem',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              backgroundColor: '#f0f0f0',
+              color: '#000',
+            },
+            disableUnderline: true,
+          }}
+          sx={{
+            width: '80%',
+            marginTop: '2rem',
+            marginBottom: '1rem',
+            '& .MuiOutlinedInput-notchedOutline': {
+              border: 'none',
+            },
+          }}
+        />
+
+        <Button
+          variant="contained"
+          onClick={handleCreatePage}
+          disabled={!code || loading}
+          sx={{
+            backgroundColor: code ? '#4caf50' : '#ccc',
+            color: 'white',
+            padding: '0.6rem 1.2rem',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: code ? 'pointer' : 'not-allowed',
+            '&:hover': {
+              backgroundColor: code ? '#43a047' : '#ccc',
+            },
+          }}
+        >
+          {loading ? 'Création...' : 'Valider'}
+        </Button>
+      </Box>
     </Box>
-
-    {successMsg && <Typography color="green" textAlign="center">{successMsg}</Typography>}
-    {error && <Typography color="red" textAlign="center">{error}</Typography>}
-
-    <TextField
-      fullWidth
-      multiline
-      rows={16}
-      placeholder="Code généré..."
-      value={code}
-      onChange={handleCodeChange}
-      sx={{ mt: 3 }}
-    />
-
-    {/* PREVIEW */}
-    <Typography variant="h6" fontFamily="Poppins, sans-serif" sx={{ mt: 4 }} gutterBottom>
-      Aperçu
-    </Typography>
-
-    <Box
-      sx={{
-        width: '100%',
-        minHeight: '300px',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        padding: 2,
-        mt: 1,
-        mb: 4,
-        backgroundColor: '#f9f9f9',
-      }}
-    >
-      {code ? <PreviewBox3 /> : <Typography>Pas encore de preview disponible.</Typography>}
-    </Box>
-
-    <Box textAlign="center" mt={3}>
-      <Button
-        variant="contained"
-        onClick={handleCreatePage}
-        sx={{
-          backgroundColor: '#1B374C',
-          borderRadius: '20px',
-          px: 4,
-          py: 1.5,
-          fontWeight: 'bold',
-          '&:hover': {
-            backgroundColor: '#102331',
-          },
-        }}
-      >
-        Sauvegarder la page
-      </Button>
-    </Box>
-  </Box>
-);
+  );
 
 }

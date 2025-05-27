@@ -58,13 +58,13 @@ exports.writeToFrontendProject = async (req, res) => {
   let { relativePath, content } = req.body;
   const userId = req.user?.id;
 
-  console.log("📥 Reçu du frontend :");
-  console.log("➡️ userId:", userId);
-  console.log("➡️ relativePath (raw):", relativePath);
-  console.log("➡️ content (début):", content?.slice(0, 100));
+  console.log(" Reçu du frontend :");
+  console.log(" userId:", userId);
+  console.log(" relativePath (raw):", relativePath);
+  console.log(" content (début):", content?.slice(0, 100));
 
   if (!userId || !relativePath || !content) {
-    console.warn("⚠️ Champs manquants (userId, relativePath, content)");
+    console.warn(" Champs manquants (userId, relativePath, content)");
     return res.status(400).json({ error: 'Champs manquants (userId, relativePath, content)' });
   }
 
@@ -87,7 +87,7 @@ exports.writeToFrontendProject = async (req, res) => {
       "filecontent3.js"
     );
 
-    console.log("📝 Chemin complet où on va écrire :", frontendFullPath);
+    console.log(" Chemin complet où on va écrire :", frontendFullPath);
 
     // === 🛠️ Correction des chemins d’assets : import dynamiques
     const assetImportRegex = /src=["']\/assets\/([^"']+)["']/g;
@@ -112,16 +112,16 @@ exports.writeToFrontendProject = async (req, res) => {
       content = content.slice(0, lastImportIndex) + importBlock + content.slice(lastImportIndex);
     }
 
-    // 🔁 Remplacer tous les "/assets/..." restants par "../assets/..."
+    //  Remplacer tous les "/assets/..." restants par "../assets/..."
     content = content.replace(/(["'])\/assets\/([^"']+)["']/g, (match, quote, path) => {
       return `${quote}../assets/${path}${quote}`;
     });
 
     fs.mkdirSync(path.dirname(frontendFullPath), { recursive: true });
     fs.writeFileSync(frontendFullPath, content, "utf8");
-    console.log("✅ Écriture réussie dans le fichier.");
+    console.log(" Écriture réussie dans le fichier.");
 
-    // 🔁 MISE À JOUR DE AppRoutes.js
+    //  MISE À JOUR DE AppRoutes.js
     const appRoutesPath = path.join(
       __dirname,
       "..", "..", "..",
@@ -149,9 +149,9 @@ exports.writeToFrontendProject = async (req, res) => {
         appRoutesContent.slice(0, lastImportIndex) +
         newImportLine +
         appRoutesContent.slice(lastImportIndex);
-      console.log("✅ Ligne d'import ajoutée.");
+      console.log(" Ligne d'import ajoutée.");
     } else {
-      console.log("ℹ️ L'import existe déjà, non ajouté.");
+      console.log(" L'import existe déjà, non ajouté.");
     }
 
     // === 2. Ajouter le <Route> seulement s'il n'existe pas
@@ -165,21 +165,21 @@ exports.writeToFrontendProject = async (req, res) => {
           newRouteLine +
           "\n" +
           appRoutesContent.slice(routesIndex);
-        console.log("✅ Route ajoutée dans AppRoutes.");
+        console.log(" Route ajoutée dans AppRoutes.");
       } else {
-        console.warn("⚠️ Balise </Routes> non trouvée, insertion impossible.");
+        console.warn(" Balise </Routes> non trouvée, insertion impossible.");
       }
     } else {
-      console.log("ℹ️ La route existe déjà, non ajoutée.");
+      console.log(" La route existe déjà, non ajoutée.");
     }
 
     fs.writeFileSync(appRoutesPath, appRoutesContent, "utf8");
-    console.log("✅ AppRoutes.js mis à jour.");
+    console.log(" AppRoutes.js mis à jour.");
 
     return res.json({ message: "Fichier et AppRoutes mis à jour avec succès" });
 
   } catch (error) {
-    console.error("❌ Erreur lors de l'écriture :", error);
+    console.error(" Erreur lors de l'écriture :", error);
     return res.status(500).json({ error: "Erreur d'écriture dans le frontend" });
   }
 };
@@ -222,11 +222,11 @@ exports.removeFromFrontendRoutes = async (req, res) => {
     // Join back and write to file
     fs.writeFileSync(appRoutesPath, updatedLines.join("\n"), "utf8");
 
-    console.log("🗑️ Import et route supprimés avec succès.");
+    console.log(" Import et route supprimés avec succès.");
     return res.json({ message: `Import et route de ${componentName} supprimés.` });
 
   } catch (error) {
-    console.error("❌ Erreur lors de la suppression :", error);
+    console.error(" Erreur lors de la suppression :", error);
     return res.status(500).json({ error: "Erreur lors de la modification de AppRoutes.js" });
   }
 };

@@ -12,6 +12,16 @@ const commitDeployRouter = require('./routes/commit-deploy');
 const generateFileRouter = require('./routes/generateFile');
 const deleteFileRouter = require('./routes/deleteFile');
 const fileCreateWriter = require('./routes/fileCreateWriter');
+const deployRoute = require('./routes/deploy');
+
+const {
+  getProject,
+  insertProject,
+  updateDeploymentUrl,
+  getAllProjects,
+  updateProjectDeploymentStatus
+} = require('./db/db');
+
 
 
 dotenv.config();
@@ -44,7 +54,7 @@ app.use(createComponentsRouter);
 app.use(generateFileRouter);
 app.use('/api', deleteFileRouter);
 app.use(fileCreateWriter);
-
+app.use('/api', deployRoute);
 
 // GitHub Strategy
 passport.use(new GitHubStrategy({
@@ -65,6 +75,59 @@ passport.deserializeUser((user, done) => {
 });
 
 app.use('/api', commitDeployRouter);
+// ➤ Save a project if not already saved
+app.post('/api/save-project', async (req, res) => {
+  const { userId, projectName } = req.body;
+
+  if (!userId || !projectName) {
+    return res.status(400).json({ error: 'Missing userId or projectName' });
+  }
+
+  try {
+    const existing = await getProject(userId, projectName);
+    if (!existing) {
+      await insertProject(userId, projectName, null, null);
+      return res.status(201).json({ message: 'Project saved' });
+    } else {
+      return res.status(200).json({ message: 'Project already exists' });
+    }
+  } catch (err) {
+    console.error('Error saving project:', err);
+    res.status(500).json({ error: 'Failed to save project' });
+  }
+});
+
+// ➤ Get all saved projects
+app.get('/api/react-projects', async (req, res) => {
+  try {
+    const projects = await getAllProjects();
+    res.json(projects);
+  } catch (err) {
+    console.error('Error fetching projects:', err);
+    res.status(500).json({ error: 'Failed to load projects' });
+  }
+});
+
+// ➤ Simulate deployment
+app.post('/api/deploy', async (req, res) => {
+  const { userId, projectName } = req.body;
+
+  if (!userId || !projectName) {
+    return res.status(400).json({ error: 'Missing userId or projectName' });
+  }
+
+  try {
+    const vercelUrl = `https://${projectName}-${userId}.vercel.app`;
+
+    await updateDeploymentUrl(userId, projectName, vercelUrl);
+    await updateProjectDeploymentStatus(userId, projectName, 'success');
+
+    res.json({ message: 'Deployment simulated', vercelUrl });
+  } catch (err) {
+    console.error('Error during deployment:', err);
+    res.status(500).json({ error: 'Deployment failed' });
+  }
+});
 
 
 // OAuth routes

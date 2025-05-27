@@ -13,6 +13,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const Sidebar = ({ open }) => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const Sidebar = ({ open }) => {
         {[
           { text: "Repositories", icon: <GitHubIcon />, path: "/RepoExplorer" },
           { text: "Dashboard", icon: <DashboardIcon />, path: "/admin/tableau" },
+          { text: "Deployer", icon: <CloudUploadIcon />, path: "/deploygit" },
           { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
         ].map((item, index) => (
           <Tooltip title={!open ? item.text : ""} placement="right" key={index}>

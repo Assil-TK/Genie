@@ -4,6 +4,8 @@ import axios from 'axios';
 import PreviewBox from '../components/PreviewBox2'; // ajustez le chemin si nécessaire
 import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header';
+import AIFormPopup from '../components/AIFormPopup';
+
 
 const GeneratePage = () => {
   const location = useLocation();
@@ -39,7 +41,7 @@ const GeneratePage = () => {
 
     try {
       const message = `Génère du code pour cette demande : ${prompt}`;
-      const response = await axios.post('https://coder-api.onrender.com/generate', {
+      const response = await axios.post('https://creation-ai-api.onrender.com/generate', {
         prompt: message,
       });
 
@@ -91,6 +93,8 @@ const GeneratePage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Header />
+      <AIFormPopup onPromptReady={(newPrompt) => setPrompt(newPrompt)} />
+
 
       <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
@@ -148,7 +152,7 @@ const GeneratePage = () => {
               marginBottom: '2rem',
             }}
           >
-            {loading ? 'Génération en cours...' : 'Générer le code'}
+            {loading ? 'Génération en cours...' : 'Générer avec IA'}
           </button>
 
           {generatedCode ? (

@@ -74,3 +74,30 @@ export async function updateFileContent(repo, path, content, sha, message) {
 
   return res.json();
 }
+
+// Save a React project to backend
+export async function saveReactProject(projectName) {
+  const res = await fetch('http://localhost:5010/api/react-projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ projectName }),
+  });
+  if (!res.ok) {
+    const errorDetails = await res.text();
+    throw new Error(`Failed to save project: ${errorDetails}`);
+  }
+  return res.json();
+}
+
+// Fetch saved React projects from backend
+export async function fetchReactProjects() {
+  const res = await fetch('http://localhost:5010/api/react-projects', {
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const errorDetails = await res.text();
+    throw new Error(`Failed to fetch saved projects: ${errorDetails}`);
+  }
+  return res.json();
+}
