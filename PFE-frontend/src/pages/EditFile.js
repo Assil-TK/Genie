@@ -10,6 +10,7 @@ import CommitInput from '../components/CommitInput';
 import AIPromptBox from '../components/AIPromptBox';
 import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
+import ImageUploadButton from '../components/ImageUploadButton';
 
 
 const EditFile = () => {
@@ -229,14 +230,21 @@ return (
             </div>
 
             {/* AIPromptBox centered below */}
-            <div style={{ width: '80%', marginTop: '1rem' }}>
-              <AIPromptBox
-                prompt={prompt}
-                setPrompt={setPrompt}
-                handleAIUpdate={handleAIUpdate}
-                loadingAI={loadingAI}
-              />
-            </div>
+<div style={{ width: '80%', marginTop: '1rem' }}>
+  <AIPromptBox
+    prompt={prompt}
+    setPrompt={setPrompt}
+    handleAIUpdate={handleAIUpdate}
+    loadingAI={loadingAI}
+  />
+  
+  {/* ✅ Add ImageUploadButton here */}
+  <ImageUploadButton
+    selectedRepo={selectedRepo}
+    onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
+  />
+</div>
+
           </div>
 
           {/* ===== Second Container: Commit Input + Buttons ===== */}

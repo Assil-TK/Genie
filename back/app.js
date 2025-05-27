@@ -13,6 +13,7 @@ const generateFileRouter = require('./routes/generateFile');
 const deleteFileRouter = require('./routes/deleteFile');
 const fileCreateWriter = require('./routes/fileCreateWriter');
 const deployRoute = require('./routes/deploy');
+const imageUploadRoute = require('./routes/image');
 
 const {
   getProject,
@@ -55,6 +56,8 @@ app.use(generateFileRouter);
 app.use('/api', deleteFileRouter);
 app.use(fileCreateWriter);
 app.use('/api', deployRoute);
+app.use('/api', imageUploadRoute);
+
 
 // GitHub Strategy
 passport.use(new GitHubStrategy({

@@ -5,6 +5,7 @@ import PreviewBox from '../components/PreviewBox2'; // ajustez le chemin si néc
 import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
 import AIFormPopup from '../components/AIFormPopup';
+import ImageUploadButton from '../components/ImageUploadButton';
 
 
 const GeneratePage = () => {
@@ -28,6 +29,11 @@ const GeneratePage = () => {
       console.error('Erreur lors de la mise à jour de filecontent2.js:', err.response?.data || err.message);
     }
   };
+
+
+  const handleImageUpload = (imagePath) => {
+  setPrompt((prev) => prev + ` ${imagePath}`);
+};
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -95,9 +101,10 @@ const GeneratePage = () => {
       <Header />
       <AIFormPopup onPromptReady={(newPrompt) => setPrompt(newPrompt)} />
 
-
       <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
+        
+
 
         <div
           style={{
@@ -121,7 +128,22 @@ const GeneratePage = () => {
           >
             Créer {parentFolderPath?.includes('components') ? 'Un Nouveau Composant' : 'Une Nouvelle Page'}
           </h1>
+          <h1
+  style={{
+    fontFamily: 'Fira Sans, sans-serif',
+    color: '#ff9800',
+    textAlign: 'center',
+    marginBottom: '4rem',
+    marginTop: '8%',
+  }}
+>
+  Créer {parentFolderPath?.includes('components') ? 'Un Nouveau Composant' : 'Une Nouvelle Page'}
+</h1>
 
+<ImageUploadButton
+  selectedRepo={selectedRepo}
+  onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
+/> 
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
