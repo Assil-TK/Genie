@@ -32,8 +32,8 @@ const GeneratePage = () => {
 
 
   const handleImageUpload = (imagePath) => {
-  setPrompt((prev) => prev + ` ${imagePath}`);
-};
+    setPrompt((prev) => prev + ` ${imagePath}`);
+  };
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -103,7 +103,7 @@ const GeneratePage = () => {
 
       <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
-        
+
 
 
         <div
@@ -128,37 +128,43 @@ const GeneratePage = () => {
           >
             Créer {parentFolderPath?.includes('components') ? 'Un Nouveau Composant' : 'Une Nouvelle Page'}
           </h1>
-          <h1
-  style={{
-    fontFamily: 'Fira Sans, sans-serif',
-    color: '#ff9800',
-    textAlign: 'center',
-    marginBottom: '4rem',
-    marginTop: '8%',
-  }}
->
-  Créer {parentFolderPath?.includes('components') ? 'Un Nouveau Composant' : 'Une Nouvelle Page'}
-</h1>
 
-<ImageUploadButton
-  selectedRepo={selectedRepo}
-  onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
-/> 
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Décrivez ce que le fichier doit faire..."
-            rows={4}
-            style={{
-              width: '60%',
-              padding: '1rem',
-              borderRadius: '10px',
-              border: '1px solid #ccc',
-              marginBottom: '1rem',
-              fontSize: '1rem',
-              alignSelf: 'center',
-            }}
-          />
+
+          <div style={{
+            position: 'relative',
+            width: '60%',
+            alignSelf: 'center',
+            marginBottom: '1rem'
+          }}>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Décrivez ce que le fichier doit faire..."
+              rows={4}
+              style={{
+                width: '100%',
+                padding: '1rem',
+                borderRadius: '20px',
+                border: '1px solid #ccc',
+                fontSize: '1rem',
+                boxSizing: 'border-box',
+                resize: 'none',
+              }}
+            />
+
+            <div style={{
+              position: 'absolute',
+              bottom: '10px',
+              right: '10px'
+            }}>
+              <ImageUploadButton
+                selectedRepo={selectedRepo}
+                onPathReady={(imagePath) =>
+                  setPrompt((prev) => prev + (prev ? '\n' : '') + imagePath)
+                }
+              />
+            </div>
+          </div>
 
           <button
             onClick={handleGenerate}

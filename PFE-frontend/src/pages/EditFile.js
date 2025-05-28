@@ -152,143 +152,139 @@ const EditFile = () => {
   };
 
   if (loading) return <p>Loading file...</p>;
-return (
-  <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-    {/* Header at the top */}
-    <Header />
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* Header at the top */}
+      <Header />
 
-    {/* Main content with sidebar and editor */}
-    <div style={{ display: 'flex', flex: 1 }}>
-      {/* Sidebar on the left */}
-      <Sidebar />
+      {/* Main content with sidebar and editor */}
+      <div style={{ display: 'flex', flex: 1 }}>
+        {/* Sidebar on the left */}
+        <Sidebar />
 
-      {/* Main editor content */}
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '80%', transform: 'translateX(1%)' }}>
-          <h1 style={{ fontFamily: 'Fira Sans, sans-serif', color: '#ff9800', textAlign: 'center', marginTop: '8%' }}>
-            Modification de Pages
-          </h1>
+        {/* Main editor content */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ width: '80%', transform: 'translateX(1%)' }}>
+            <h1 style={{ fontFamily: 'Fira Sans, sans-serif', color: '#ff9800', textAlign: 'center', marginTop: '8%' }}>
+              Modification de Pages
+            </h1>
 
-          <div style={{ marginTop: '3%' }}>
-            <UserInfoWithTree
-              user={user}
-              selectedRepo={selectedRepo}
-              selectedFile={selectedFile}
-            />
-          </div>
-
-          {/* ===== Main Container: textarea + preview + AI box ===== */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '2rem' , backgroundColor: '#ffffff',
-        width: '118%',
-        borderRadius: '8px',
-        padding: '1rem 1.5rem',
-        marginBottom: '1.5rem',
-        transform: 'translateX(-6%)',
-        color: '#333',
-        border: '1px solid #ddd'}}>
-            {/* Row: Textarea + Preview */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '1rem',
-                alignItems: 'flex-start',
-                width: '100%',
-                justifyContent: 'center',
-              }}
-            >
-              {/* Textarea */}
-              <textarea
-                value={content}
-                onChange={(e) => {
-                  setContent(e.target.value);
-                  updateFileContentInPlatform(e.target.value, selectedFile);
-                }}
-                rows={25}
-                style={{
-                  flex: 1,
-                  minWidth: '300px',
-                  maxWidth: '50%',
-                  height: '600px',
-                  whiteSpace: 'pre',
-                  fontFamily: "'Fira Code', monospace",
-                  padding: '1rem',
-                  borderRadius: '12px',
-                  border: '1px solid #ccc',
-                  background: '#f9f9fb',
-                  color: '#333',
-                  fontSize: '0.95rem',
-                  lineHeight: '1.5',
-                  resize: 'none',
-                  overflowY: 'scroll',
-                }}
-              />
-
-              {/* Preview */}
-              <div style={{ flex: 1.4, minWidth: '400px' }}>
-                <PreviewBox />
-              </div>
-            </div>
-
-            {/* AIPromptBox centered below */}
-<div style={{ width: '80%', marginTop: '1rem' }}>
-  <AIPromptBox
-    prompt={prompt}
-    setPrompt={setPrompt}
-    handleAIUpdate={handleAIUpdate}
-    loadingAI={loadingAI}
-  />
-  
-  {/* ✅ Add ImageUploadButton here */}
-  <ImageUploadButton
-    selectedRepo={selectedRepo}
-    onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
-  />
-</div>
-
-          </div>
-
-          {/* ===== Second Container: Commit Input + Buttons ===== */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3rem', gap: '1rem' }}>
-            {/* Commit Message Input */}
-            <div style={{ width: '80%' }}>
-              <CommitInput
-                commitMessage={commitMessage}
-                setCommitMessage={setCommitMessage}
-              />
-            </div>
-
-            {/* Buttons: Save + Deploy */}
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button
-                onClick={handleSave}
-                style={{
-                  padding: '0.6rem 1.2rem',
-                  fontSize: '1rem',
-                  backgroundColor: '#4caf50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                Save
-              </button>
-
-              <CommitDeployButton
+            <div style={{ marginTop: '3%' }}>
+              <UserInfoWithTree
                 user={user}
                 selectedRepo={selectedRepo}
                 selectedFile={selectedFile}
-                content={content}
-                sha={sha}
-                commitMessage={commitMessage}
               />
+            </div>
+
+            {/* ===== Main Container: textarea + preview + AI box ===== */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '2rem', backgroundColor: '#ffffff',
+              width: '118%',
+              borderRadius: '8px',
+              padding: '1rem 1.5rem',
+              marginBottom: '1.5rem',
+              transform: 'translateX(-6%)',
+              color: '#333',
+              border: '1px solid #ddd'
+            }}>
+              {/* Row: Textarea + Preview */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  alignItems: 'flex-start',
+                  width: '100%',
+                  justifyContent: 'center',
+                }}
+              >
+                {/* Textarea */}
+                <textarea
+                  value={content}
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                    updateFileContentInPlatform(e.target.value, selectedFile);
+                  }}
+                  rows={25}
+                  style={{
+                    flex: 1,
+                    minWidth: '300px',
+                    maxWidth: '50%',
+                    height: '600px',
+                    whiteSpace: 'pre',
+                    fontFamily: "'Fira Code', monospace",
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    border: '1px solid #ccc',
+                    background: '#f9f9fb',
+                    color: '#333',
+                    fontSize: '0.95rem',
+                    lineHeight: '1.5',
+                    resize: 'none',
+                    overflowY: 'scroll',
+                  }}
+                />
+
+                {/* Preview */}
+                <div style={{ flex: 1.4, minWidth: '400px' }}>
+                  <PreviewBox />
+                </div>
+              </div>
+
+              {/* AIPromptBox centered below */}
+              <div style={{ width: '80%', marginTop: '1rem' }}>
+                <AIPromptBox
+                  prompt={prompt}
+                  setPrompt={setPrompt}
+                  handleAIUpdate={handleAIUpdate}
+                  loadingAI={loadingAI}
+                >
+                  {/* Injected upload button into bottom right corner */}
+                  <ImageUploadButton
+                    selectedRepo={selectedRepo}
+                    onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
+                  />
+                </AIPromptBox>
+              </div>
+
+
+            </div>
+
+            {/* ===== Second Container: Commit Input + Buttons ===== */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3rem', gap: '1rem' }}>
+              {/* Commit Message Input */}
+              <div style={{ width: '80%' }}>
+                <CommitInput
+                  commitMessage={commitMessage}
+                  setCommitMessage={setCommitMessage}
+                />
+              </div>
+
+              {/* Buttons: Save + Deploy */}
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  onClick={handleSave}
+                  style={{
+                    padding: '0.6rem 1.2rem',
+                    fontSize: '1rem',
+                    backgroundColor: '#4caf50',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Save
+                </button>
+
+                
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 
 };
 

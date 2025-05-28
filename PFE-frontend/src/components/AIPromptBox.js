@@ -1,7 +1,7 @@
 import React from 'react';
 
-const AIPromptBox = ({ prompt, setPrompt, handleAIUpdate, loadingAI }) => (
-  <div style={{ margin: '3rem 0 1rem 2rem' }}>
+const AIPromptBox = ({ prompt, setPrompt, handleAIUpdate, loadingAI, children }) => (
+  <div style={{ margin: '3rem 0 1rem 2rem', position: 'relative' }}>
     <label
       htmlFor="ai-prompt"
       style={{
@@ -17,24 +17,40 @@ const AIPromptBox = ({ prompt, setPrompt, handleAIUpdate, loadingAI }) => (
       Modifier avec l'IA
     </label>
 
-    <textarea
-      id="ai-prompt"
-      value={prompt}
-      onChange={(e) => setPrompt(e.target.value)}
-      rows={5}
-      placeholder="Décrivez ce que vous souhaitez modifier dans le code..."
-      style={{
-        width: '100%',
-        padding: '0.9rem',
-        fontSize: '1rem',
-        fontFamily: 'inherit',
-        borderRadius: '8px',
-        border: '1px solid #ccc',
-        resize: 'none',
-        marginBottom: '1rem',
-        backgroundColor: '#fff',
-      }}
-    />
+    <div style={{ position: 'relative' }}>
+      <textarea
+        id="ai-prompt"
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        rows={4}
+        placeholder="Décrivez ce que vous souhaitez modifier dans le code..."
+        style={{
+          width: '100%',
+          padding: '0.9rem 2.5rem 0.9rem 0.9rem', // padding-right to make room for icon
+          fontSize: '1rem',
+          fontFamily: 'inherit',
+          borderRadius: '30px',
+          border: '1px solid #ccc',
+          resize: 'none',
+          marginBottom: '1rem',
+          backgroundColor: '#fff',
+          boxSizing: 'border-box',
+        }}
+      />
+
+      {/* 📎 Icon inside textarea box, bottom-right */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '22px',
+          right: '12px',
+          right: '-3px',
+          zIndex: 2,
+        }}
+      >
+        {children}
+      </div>
+    </div>
 
     <div style={{ textAlign: 'center' }}>
       <button

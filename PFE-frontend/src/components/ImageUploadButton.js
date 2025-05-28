@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const ImageUploadButton = ({ selectedRepo, onPathReady }) => {
   const [uploading, setUploading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
+
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const showSnackbar = (message, severity = 'info') => {
+    setSnackbar({ open: true, message, severity });
+  };
 
   const handleClick = () => {
     if (!selectedRepo) {
-      alert('Repository name is missing.');
+      showSnackbar('Repository name is missing.', 'error');
       console.error('No selectedRepo provided to ImageUploadButton.');
       return;
     }
@@ -20,7 +38,7 @@ const ImageUploadButton = ({ selectedRepo, onPathReady }) => {
       if (!file) return;
 
       if (file.size > 5 * 1024 * 1024) {
-        alert('File is too large (max 5MB)');
+        showSnackbar('File is too large (max 5MB)', 'warning');
         return;
       }
 
@@ -38,15 +56,14 @@ const ImageUploadButton = ({ selectedRepo, onPathReady }) => {
           { withCredentials: true }
         );
         const imagePath = `../assets/${file.name}`;
-        alert('✅ Image uploaded: ' + imagePath);
+        showSnackbar('Image uploaded successfully!', 'success');
 
-        // 🔁 Call the parent callback
         if (onPathReady) {
           onPathReady(imagePath);
         }
       } catch (err) {
         console.error('Upload failed:', err.response?.data || err.message);
-        alert('❌ Upload failed: ' + (err.response?.data?.error || err.message));
+        showSnackbar('Upload failed: ' + (err.response?.data?.error || err.message), 'error');
       } finally {
         setUploading(false);
       }
@@ -56,20 +73,31 @@ const ImageUploadButton = ({ selectedRepo, onPathReady }) => {
   };
 
   return (
-    <img
-      src="/upload-icon.png"
-      alt="Upload"
-      onClick={!uploading ? handleClick : null}
-      style={{
-        cursor: uploading ? 'not-allowed' : 'pointer',
-        opacity: uploading ? 0.6 : 1,
-        width: 40,
-        height: 40,
-      }}
-      title={uploading ? 'Uploading...' : 'Upload Image'}
-    />
+    <>
+      <Tooltip title={uploading ? 'Uploading...' : 'Upload Image'}>
+        <span>
+          <IconButton 
+            onClick={!uploading ? handleClick : null} 
+            disabled={uploading}
+            size="large"
+          >
+            <AddPhotoAlternateIcon style={{ fontSize: 40, opacity: uploading ? 0.6 : 1 }} />
+          </IconButton>
+        </span>
+      </Tooltip>
+
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
 export default ImageUploadButton;
-
