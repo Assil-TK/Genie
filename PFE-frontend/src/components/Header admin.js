@@ -16,7 +16,7 @@ const Header = ({toggleSidebar}) => {
                     <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" sx={{ flexGrow:1, fontFamily: 'poppins' }}>
-                    EFFIA
+                    GenieAI
                 </Typography>
                 <IconButton color="inherit">
                     <NotificationsIcon/>

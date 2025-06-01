@@ -8,6 +8,9 @@ import {
 } from '../services/api';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import PreviewBox3 from './PreviewBox3';
+import ImageUploadButton from './ImageUploadButto2';
+
+
 
 const EditablePreview = ({ pageName }) => {
     const [instructions, setInstructions] = useState('');
@@ -144,15 +147,26 @@ ${modifiedCode}
     return (
         <Box sx={{ marginTop: '2rem' }}>
             <Typography variant="h6">Décrire ce que vous souhaitez modifier</Typography>
-            <TextField
-                fullWidth
-                multiline
-                rows={4}
-                value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
-                placeholder="Ex : Ajoute une image au-dessus du titre"
-                sx={{ marginBottom: '1rem' }}
-            />
+            <Box sx={{ position: 'relative', marginBottom: '1rem' }}>
+  <TextField
+    fullWidth
+    multiline
+    rows={4}
+    value={instructions}
+    onChange={(e) => setInstructions(e.target.value)}
+    placeholder="Ex : Ajoute une image au-dessus du titre"
+  />
+  <Box sx={{ position: 'absolute', bottom: 10, right: 10 }}>
+    <ImageUploadButton
+  pageName={pageName}
+  onUploadComplete={(imagePath) =>
+    setInstructions((prev) => prev + (prev ? '\n' : '') + imagePath)
+  }
+/>
+
+  </Box>
+</Box>
+
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
                 <Button
                     onClick={handleGenerateCode}

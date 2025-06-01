@@ -22,7 +22,7 @@ const Header = ({ toggleSidebar }) => {
                 </IconButton>
 
                 <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: "Poppins" }}>
-                    EFFIA
+                    GenieAI
                 </Typography>
 
                 

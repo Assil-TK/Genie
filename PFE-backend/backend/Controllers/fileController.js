@@ -186,6 +186,57 @@ exports.writeToFrontendProject = async (req, res) => {
 
 
 
+exports.uploadImage = async (req, res) => {
+  const userId = req.body.userId;
+  const projectName = req.body.projectName;
+  const file = req.file;
+
+  if (!userId || !projectName || !file) {
+    return res.status(400).json({ error: "Champs manquants : userId, projectName ou fichier" });
+  }
+
+  try {
+    const fileName = file.originalname;
+
+    // === Destination backend ===
+    const backendPath = path.join(
+      __dirname, "..", "uploads", userId, "projects", projectName, "src", "assets"
+    );
+
+    // === Destination frontend ===
+    const frontendPath = path.join(
+      __dirname, "..", "..", "..", "PFE-frontend", "src", "importedproject", userId, "projects", projectName, "src", "assets"
+    );
+
+    // Créer les dossiers s'ils n'existent pas
+    fs.mkdirSync(backendPath, { recursive: true });
+    fs.mkdirSync(frontendPath, { recursive: true });
+
+    // Définir les chemins de destination complets
+    const backendFilePath = path.join(backendPath, fileName);
+    const frontendFilePath = path.join(frontendPath, fileName);
+
+    // Lire le fichier temporaire
+    const fileData = fs.readFileSync(file.path);
+
+    // Écrire dans le backend et le frontend
+    fs.writeFileSync(backendFilePath, fileData);
+    fs.writeFileSync(frontendFilePath, fileData);
+
+    // Supprimer le fichier temporaire
+    fs.unlinkSync(file.path);
+
+    res.status(200).json({ message: "Image enregistrée avec succès dans le back et le front" });
+  } catch (err) {
+    console.error("Erreur lors de l'enregistrement de l'image :", err);
+    res.status(500).json({ error: "Erreur serveur lors de l'enregistrement de l'image" });
+  }
+};
+
+
+
+
+
 exports.removeFromFrontendRoutes = async (req, res) => {
   const componentName = "FileContent3";
   const routePath = "/filecontent3";

@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "temp/" });
 const { verifyToken } = require ("../middleware/authMiddleware");
 const fileController = require('../Controllers/fileController');
 const aiController = require("../Controllers/aiController");
@@ -21,7 +23,7 @@ router.post("/ai/save",verifyToken, aiController.saveEdit);
 router.post('/savePageCode',verifyToken,fileController.savePageCode); //utilisé modif
 router.post('/syncToFrontend', verifyToken, fileController.writeToFrontendProject);
 router.post('/removeFromFrontend', verifyToken, fileController.removeFromFrontendRoutes);
-
+router.post('/upload-image', verifyToken, upload.single("image"), fileController.uploadImage);
 
 // Route pour créer un fichier de page
 router.post('/createFile',verifyToken,fileController.createFile);

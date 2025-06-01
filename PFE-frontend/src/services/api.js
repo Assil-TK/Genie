@@ -18,6 +18,33 @@ export const generatePageFromPrompt = async (prompt) => {
   }
 };
 
+
+export const uploadImage = async (formData) => {
+  try {
+    const token = localStorage.getItem('token'); // or your auth method
+
+    const response = await axios.post(
+      `${API_URL}/api/upload-image`, // replace with your correct route
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, // If your backend requires auth
+        },
+      }
+    );
+
+    console.log("📡 Server response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ API uploadImage error:", error);
+    throw error;
+  }
+};
+
+
+
+
 export const getPages = async () => {
   try {
     const response = await axios.get(`${API_URL}/pages`);

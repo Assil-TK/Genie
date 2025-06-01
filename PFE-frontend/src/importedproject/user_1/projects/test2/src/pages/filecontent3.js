@@ -1,40 +1,36 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import React from "react";
+import { useNavigate } from "react-router-dom";import imageAsset1 from "../assets/logo192.png";
 
-const StyledDiv = styled('div')(({ theme }) => ({
-  minHeight: '100vh',
-  backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#FDF5E6', // Light pink for light mode, dark grey for dark mode
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-}));
 
-const RedButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#FF5733', // Tomato red
-  '&:hover': {
-    backgroundColor: '#E53935',
-  },
-}));
+function PageOne() {
+  const navigate = useNavigate();
 
-const PinkBackgroundContainer = () => {
   return (
-    <StyledDiv>
-      <CssBaseline />
-      <RedButton variant="contained" color="inherit">
-        Hello, Red Button
-      </RedButton>
-      <Typography variant="h1" component="h1" gutterBottom>
-        Pink Background Page
-      </Typography>
-      <Typography variant="body1" component="p">
-        This is a modern UI with a pink background.
-      </Typography>
-    </StyledDiv>
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      <h1>Page One</h1>
+      <img
+        src={imageAsset1}
+        alt="Page One"
+        style={{ width: "300px", height: "auto", marginBottom: "20px" }}
+      />
+      <br />
+      <button onClick={() => navigate("/page-two")}>Go to Page Two</button>
+      <br /><br />
+      <button
+        onClick={() => navigate("/page-two")}
+        style={{
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Button 2
+      </button>
+    </div>
   );
-};
+}
 
-export default PinkBackgroundContainer;
+export default PageOne;
