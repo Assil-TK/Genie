@@ -4,6 +4,16 @@ const axios = require('axios');
 const db = require('../db/db');
 const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 
+// 🔧 Sanitize project name
+const sanitizeProjectName = (name) => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/g, '-')      // Only allow valid characters
+    .replace(/--+/g, '-')               // Replace multiple dashes
+    .replace(/^-+|-+$/g, '')            // Trim leading/trailing dashes
+    .substring(0, 100);                 // Max length 100
+};
+
 router.post('/deploy', async (req, res) => {
   const {
     repo,
@@ -27,6 +37,7 @@ router.post('/deploy', async (req, res) => {
   console.log('📁 Using sanitized rootDirectory:', `"${cleanRootDir}"`);
 
   const framework = rawFramework === 'react' ? 'create-react-app' : rawFramework;
+  const sanitizedName = sanitizeProjectName(repo);
   const headers = {
     Authorization: `Bearer ${VERCEL_TOKEN}`,
     'Content-Type': 'application/json'
@@ -42,7 +53,7 @@ router.post('/deploy', async (req, res) => {
       const deployResponse = await axios.post(
         'https://api.vercel.com/v13/deployments',
         {
-          name: repo,
+          name: sanitizedName,
           project: project.vercel_project_id,
           gitSource: {
             type: 'github',
@@ -58,7 +69,7 @@ router.post('/deploy', async (req, res) => {
       console.log('📦 Project not in DB or missing project ID. Creating new project...');
 
       const projectBody = {
-        name: repo,
+        name: sanitizedName,
         framework,
         buildCommand,
         outputDirectory,
@@ -90,7 +101,7 @@ router.post('/deploy', async (req, res) => {
       const deployResponse = await axios.post(
         'https://api.vercel.com/v13/deployments',
         {
-          name: repo,
+          name: sanitizedName,
           project: newProjectId,
           gitSource: {
             type: 'github',
