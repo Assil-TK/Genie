@@ -75,7 +75,7 @@ exports.downloadProject = async (req, res) => {
     if (!projectPath) return res.status(400).json({ error: "Le projet n'a pas de chemin défini." });
 
     const zipFileName = `project_${projectId}.zip`;
-    const zipPath = path.join(__dirname, `../../uploads/${zipFileName}`);
+    const zipPath = path.join(__dirname, `../../backend/uploads/${zipFileName}`);
     const output = fs.createWriteStream(zipPath);
     const archive = archiver("zip", { zlib: { level: 9 } });
 
