@@ -5,12 +5,13 @@ import {
   Box,
   Card,
   CardContent,
-  Typography,
-  MenuItem,
+  Typography
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser, loginUser } from "../services/api";
 import LoginButton from "../components/LoginButton";
+
+const ADMIN_EMAIL = "pfeplatformisimahdia@gmail.com";
 
 const AuthPage = ({ onLogin = () => {} }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -18,35 +19,34 @@ const AuthPage = ({ onLogin = () => {} }) => {
     username: "",
     email: "",
     password: "",
-    role: "admin",
   });
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isRegister && formData.role === "super-admin") {
-      alert("La clé Super Admin est requise pour créer un super administrateur.");
-      return;
-    }
+    const isAdmin = formData.email === ADMIN_EMAIL;
 
     try {
       if (isRegister) {
-        const response = await registerUser(formData);
+        if (isAdmin) {
+          alert("L'admin ne peut pas s'inscrire.");
+          return;
+        }
+
+        await registerUser({ ...formData, role: "client" });
         alert("Inscription réussie. Veuillez vous connecter.");
         setIsRegister(false);
-        setFormData({ username: "", email: "", password: "", role: "admin" });
+        setFormData({ username: "", email: "", password: "" });
       } else {
-        const response = await loginUser(formData);
+        const response = await loginUser({ ...formData });
         localStorage.setItem("token", response.token);
 
         if (typeof onLogin === "function") onLogin();
 
-        // Navigate based on the role from formData
-        if (formData.role === "super-admin") {
+        if (isAdmin) {
           navigate("/admin/tableau");
         } else {
-          // default to admin
           navigate("/home");
         }
       }
@@ -61,7 +61,7 @@ const AuthPage = ({ onLogin = () => {} }) => {
 
   const toggleAuthMode = () => {
     setIsRegister(!isRegister);
-    setFormData({ username: "", email: "", password: "", role: "admin" });
+    setFormData({ username: "", email: "", password: "" });
   };
 
   return (
@@ -95,7 +95,6 @@ const AuthPage = ({ onLogin = () => {} }) => {
               textAlign: "center",
               fontWeight: "bold",
               color: "#1B374C",
-              textShadow: "1px 1px 1px rgba(0, 0, 0, 0.18)",
               mb: 1,
             }}
           >
@@ -138,21 +137,6 @@ const AuthPage = ({ onLogin = () => {} }) => {
               margin="normal"
               required
             />
-
-            <TextField
-              label="Rôle"
-              select
-              value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-              fullWidth
-              margin="normal"
-              required
-            >
-              <MenuItem value="admin">Client</MenuItem>
-              <MenuItem value="super-admin">Admin</MenuItem>
-            </TextField>
 
             {!isRegister && (
               <Box sx={{ textAlign: "right", mt: 1 }}>
