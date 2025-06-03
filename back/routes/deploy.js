@@ -1,125 +1,112 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
-const db = require('../db/db');
+const { exec } = require('child_process');
+const fs = require('fs-extra');
+const path = require('path');
+
 const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 
 router.post('/deploy', async (req, res) => {
   const {
     repo,
     username,
-    framework: rawFramework,
-    buildCommand,
-    outputDirectory,
-    rootDirectory: rawRootDirectory = '',
     branch = 'main',
-    repoId
+    buildCommand = 'npm run build',
+    outputDirectory = 'build',
+    rootDirectory = '.',
   } = req.body;
 
-  console.log('\n🟡 [Backend] Received payload from frontend:');
-  console.log(JSON.stringify(req.body, null, 2));
-
-  if (!repo || !username || !repoId) {
-    return res.status(400).json({ error: 'Missing required fields: repo, username, or repoId' });
+  if (!repo || !username) {
+    return res.status(400).json({ error: 'Missing repo or username' });
   }
 
-  const cleanRootDir = rawRootDirectory.trim() === '.' || rawRootDirectory.trim() === './' ? '' : rawRootDirectory.trim();
-  console.log('📁 Using sanitized rootDirectory:', `"${cleanRootDir}"`);
+  const repoLc = repo.toLowerCase();
+  const usernameLc = username.toLowerCase();
 
-  const framework = rawFramework === 'react' ? 'create-react-app' : rawFramework;
-  const headers = {
-    Authorization: `Bearer ${VERCEL_TOKEN}`,
-    'Content-Type': 'application/json'
-  };
+  const imageName = `${usernameLc}-${repoLc}-image`;
+  const containerName = `${usernameLc}-${repoLc}-container`;
+  const dockerContext = path.join(__dirname, '..', 'docker');
+  const localOutputPath = path.join(__dirname, '..', 'tmp', `${usernameLc}-${repoLc}-build`);
 
   try {
-    let project = await db.getProject(username, repo);
-    let deploymentUrl;
+    const buildCmd = `docker build \
+--build-arg GITHUB_USERNAME=${username} \
+--build-arg GITHUB_REPO=${repo} \
+--build-arg BRANCH=${branch} \
+--build-arg BUILD_COMMAND="${buildCommand}" \
+-t ${imageName} ${dockerContext}`;
+    console.log('🛠️ Building docker image...');
+    await execPromise(buildCmd);
 
-    if (project && project.vercel_project_id) {
-      console.log('🟢 Project already exists. Redeploying...');
-
-      const deployResponse = await axios.post(
-        'https://api.vercel.com/v13/deployments',
-        {
-          name: repo,
-          project: project.vercel_project_id,
-          gitSource: {
-            type: 'github',
-            ref: branch,
-            repoId
-          }
-        },
-        { headers }
-      );
-
-      deploymentUrl = deployResponse.data.url;
-    } else {
-      console.log('📦 Project not in DB or missing project ID. Creating new project...');
-
-      const projectBody = {
-        name: repo,
-        framework,
-        buildCommand,
-        outputDirectory,
-        gitRepository: {
-          type: 'github',
-          repoId,
-          repo,
-          org: username
-        }
-      };
-
-      if (
-        cleanRootDir &&
-        !cleanRootDir.startsWith('./') &&
-        !cleanRootDir.includes('../')
-      ) {
-        projectBody.rootDirectory = cleanRootDir;
-      }
-
-      const createResponse = await axios.post(
-        'https://api.vercel.com/v9/projects',
-        projectBody,
-        { headers }
-      );
-
-      const newProjectId = createResponse.data.id;
-      await db.insertProject(username, repo, newProjectId, null);
-
-      const deployResponse = await axios.post(
-        'https://api.vercel.com/v13/deployments',
-        {
-          name: repo,
-          project: newProjectId,
-          gitSource: {
-            type: 'github',
-            ref: branch,
-            repoId
-          }
-        },
-        { headers }
-      );
-
-      deploymentUrl = deployResponse.data.url;
+    const removeContainerCmd = `docker rm -f ${containerName}`;
+    try {
+      await execPromise(removeContainerCmd);
+      console.log(`🧹 Removed existing container: ${containerName}`);
+    } catch (e) {
+      console.log(`ℹ️ No existing container named ${containerName}, continuing...`);
     }
 
-    await db.updateDeploymentUrl(username, repo, deploymentUrl);
-    console.log('✅ Deployment successful:', deploymentUrl);
+    const createCmd = `docker create --name ${containerName} ${imageName}`;
+    await execPromise(createCmd);
 
-    return res.status(200).json({ url: deploymentUrl });
+    await fs.remove(localOutputPath);
+    await fs.ensureDir(localOutputPath);
 
-  } catch (error) {
-    console.error('\n❌ Deployment failed.');
-    console.error('Message:', error.message);
-    console.error('Response:', error.response?.data);
+    const containerBuildPath =
+      rootDirectory === '.' ? `/app/${outputDirectory}` : `/app/${rootDirectory}/${outputDirectory}`;
+    const copyCmd = `docker cp ${containerName}:${containerBuildPath} ${localOutputPath}`;
+    console.log('📂 Copying build output from container...');
+    await execPromise(copyCmd);
 
-    return res.status(500).json({
-      error: 'Deployment failed',
-      message: error.message,
-      details: error.response?.data || 'Unknown error'
-    });
+    const buildDir = path.join(localOutputPath, outputDirectory);
+    const deploymentUrl = await deployToVercelFromHost(buildDir, repoLc);
+
+    await execPromise(`docker rm ${containerName}`);
+    await execPromise(`docker rmi ${imageName}`);
+    await fs.remove(localOutputPath);
+
+    res.json({ url: deploymentUrl });
+  } catch (err) {
+    console.error('❌ Deployment error:', err);
+    res.status(500).json({ error: 'Deployment failed', message: err.message });
   }
 });
+
+function execPromise(cmd) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, (err, stdout, stderr) => {
+      if (err) {
+        reject(new Error(stderr || stdout || err.message));
+      } else {
+        resolve(stdout);
+      }
+    });
+  });
+}
+
+async function deployToVercelFromHost(buildPath, projectName) {
+  if (!VERCEL_TOKEN) throw new Error('VERCEL_TOKEN not defined');
+
+  return new Promise((resolve, reject) => {
+    const cmd = `vercel deploy ${buildPath} --prod --token=${VERCEL_TOKEN} --confirm`;
+    console.log('🚀 Deploying to Vercel with command:', cmd);
+
+    exec(cmd, { maxBuffer: 1024 * 500 }, (err, stdout, stderr) => {
+      if (err) {
+        console.error('❌ Deployment error:', stderr || err.message);
+        return reject(stderr || err.message);
+      }
+      const match = stdout.match(/https?:\/\/[^\s]+\.vercel\.app/);
+      const url = match ? match[0] : null;
+
+      if (url) {
+        console.log('✅ Deployed to:', url);
+        resolve(url);
+      } else {
+        reject('URL not found in Vercel output');
+      }
+    });
+  });
+}
 
 module.exports = router;
