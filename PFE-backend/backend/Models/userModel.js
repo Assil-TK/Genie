@@ -25,8 +25,8 @@ const User = sequelize.define('User', {
         allowNull: false
     },
      role: {
-        type: DataTypes.ENUM('client', 'admin', 'super-admin'),
-        defaultValue: 'admin',  
+        type: DataTypes.ENUM('client', 'admin'),
+        //defaultValue: 'client',  
         allowNull: false,  
     },
     isApproved: {
@@ -40,6 +40,10 @@ const User = sequelize.define('User', {
     failedAttempts: { 
         type: DataTypes.INTEGER, 
         default: 0 },
+    lockedUntil: { 
+        type: DataTypes.DATE, 
+        allowNull: true 
+    }
 }, {
     freezeTableName: true,
 });

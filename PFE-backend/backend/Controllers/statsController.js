@@ -5,6 +5,8 @@ const Avis = require('../Models/avis');
 const Connexion = require('../Models/connexion');
 const { Op } = require('sequelize');
 const sequelize = require('sequelize'); 
+const { Sequelize } = require('sequelize');
+
 
 exports.getDashboardStats = async (req, res) => {
   try {
@@ -54,13 +56,41 @@ exports.getDashboardStats = async (req, res) => {
 
     console.log('Opérations par jour (7 derniers jours):', operations);
 
+     const projetsByDate = await Projet.findAll({
+      attributes: [
+        [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'date'],
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'count']
+      ],
+      where: {
+        createdAt: {
+          [Op.gte]: last7Days
+        }
+      },
+      group: [Sequelize.fn('DATE', Sequelize.col('createdAt'))],
+      order: [[Sequelize.fn('DATE', Sequelize.col('createdAt')), 'ASC']],
+      raw: true
+    });
+
+    console.log('Projets créés par jour (7 derniers jours) :', projetsByDate);
+
+    const statusCounts = await Projet.findAll({
+      attributes: [
+        'deploymentStatus',
+        [Sequelize.fn('COUNT', Sequelize.col('deploymentStatus')), 'count']
+      ],
+      group: ['deploymentStatus']
+    });
+
+    console.log('Projets par etat de deploiement :', statusCounts);
     res.status(200).json({
       totalUsers,
       totalProjects,
       totalAvis,
       averageNote,
       logins,
-      operations
+      operations,
+      projetsByDate,
+      statusCounts
     });
   } catch (err) {
     console.error("Erreur dans la récupération des statistiques:", err);

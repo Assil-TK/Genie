@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Edit, Delete, GroupAdd } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import {getAdmins, createAdmin, updateAdmin, deleteAdmin } from "../services/api";
+import {getClients, createClient, updateClient, deleteClient } from "../services/api";
 
 const AdminList = () => {
   const [admins, setAdmins] = useState([]);
@@ -23,7 +23,7 @@ const AdminList = () => {
   const loadAdmins = async () => {
     setLoading(true);
     try {
-      setAdmins(await getAdmins());
+      setAdmins(await getClients());
     } finally {
       setLoading(false);
     }
@@ -45,13 +45,13 @@ const AdminList = () => {
   const handleSubmit = async () => {
     try {
       if (editAdmin) {
-        await updateAdmin(editAdmin.id, {
+        await updateClient(editAdmin.id, {
           username: form.username,
           email: form.email,
           isApproved: true,
         });
       } else {
-        await createAdmin({ ...form });
+        await createClient({ ...form });
       }
   
       setSnackbar({
@@ -80,7 +80,7 @@ const AdminList = () => {
     }
   
     try {
-      await deleteAdmin(id);
+      await deleteClient(id);
       setSnackbar({
         open: true,
         message: "Client supprimé avec succès",
