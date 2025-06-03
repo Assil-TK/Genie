@@ -833,12 +833,17 @@ export const createAvis = async (note, commentaire) => {
 };
 
 //dashboard admin
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (startDate, endDate) => {
   const token = localStorage.getItem("token");
+  const params = {};
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+
   const response = await axios.get(`${API_URL}/api/stats/admin/tableau`,
     {
       headers:
-        { Authorization: `Bearer ${token}` }
+        { Authorization: `Bearer ${token}` },
+        params
     }
   );
   return response.data;
