@@ -24,10 +24,17 @@ exports.getDashboardStats = async (req, res) => {
     const averageNote = await Avis.aggregate('note', 'avg');
     console.log('Note moyenne des avis:', averageNote);
 
-    const today = new Date();
-    const last7Days = new Date(today.setDate(today.getDate() - 6));
+    const { startDate, endDate } = req.query;
+    const start = startDate ? new Date(startDate) : new Date(Date.now() - 6 * 24 * 60 * 60 * 1000); // 7 derniers jours
+    const end = endDate ? new Date(endDate) : new Date(); // aujourd'hui
 
-    console.log('Date limite des 7 derniers jours:', last7Days);
+    console.log(`Filtrage entre le ${start.toISOString()} et le ${end.toISOString()}`);
+
+
+    //const today = new Date();
+    //const last7Days = new Date(today.setDate(today.getDate() - 6));
+
+    //console.log('Date limite des 7 derniers jours:', last7Days);
 
     const logins = await Connexion.findAll({
       attributes: [
@@ -35,11 +42,12 @@ exports.getDashboardStats = async (req, res) => {
         [sequelize.fn('COUNT', sequelize.col('id')), 'count']
       ],
       where: {
-        timestamp: { [Op.gte]: last7Days }
+        //timestamp: { [Op.gte]: last7Days }
+        timestamp: { [Op.between]: [start, end] }
+
       },
       group: [sequelize.fn('DATE', sequelize.col('timestamp'))]
     });
-
     console.log('Connexions par jour (7 derniers jours):', logins);
 
     const operations = await Operation.findAll({
@@ -49,11 +57,11 @@ exports.getDashboardStats = async (req, res) => {
         [sequelize.fn('COUNT', sequelize.col('id')), 'count']
       ],
       where: {
-        createdAt: { [Op.gte]: last7Days }
+        //createdAt: { [Op.gte]: last7Days }
+        createdAt: { [Op.between]: [start, end] }
       },
       group: [sequelize.fn('DATE', sequelize.col('createdAt')), 'operationType']
     });
-
     console.log('Opérations par jour (7 derniers jours):', operations);
 
      const projetsByDate = await Projet.findAll({
@@ -63,14 +71,14 @@ exports.getDashboardStats = async (req, res) => {
       ],
       where: {
         createdAt: {
-          [Op.gte]: last7Days
+          //[Op.gte]: last7Days
+          [Op.between]: [start, end]
         }
       },
       group: [Sequelize.fn('DATE', Sequelize.col('createdAt'))],
       order: [[Sequelize.fn('DATE', Sequelize.col('createdAt')), 'ASC']],
       raw: true
     });
-
     console.log('Projets créés par jour (7 derniers jours) :', projetsByDate);
 
     const statusCounts = await Projet.findAll({
@@ -78,6 +86,9 @@ exports.getDashboardStats = async (req, res) => {
         'deploymentStatus',
         [Sequelize.fn('COUNT', Sequelize.col('deploymentStatus')), 'count']
       ],
+      where: {
+        createdAt: { [Op.between]: [start, end] }
+      },
       group: ['deploymentStatus']
     });
 
