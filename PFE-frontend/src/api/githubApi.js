@@ -44,16 +44,25 @@ export async function fetchFiles(repo, path = '') {
 
 // Fetch content of a specific file from a repo
 export async function fetchFileContent(repo, path) {
-  const res = await fetch(`http://localhost:5010/api/file-content?repo=${repo}&path=${path}`, {
-    credentials: 'include',
-  });
+  try {
+    const res = await fetch(`http://localhost:5010/api/file-content?repo=${repo}&path=${path}`, {
+      credentials: 'include',
+    });
 
-  if (!res.ok) {
-    const errorDetails = await res.text();
-    throw new Error(`Failed to fetch file content: ${errorDetails}`);
+    if (!res.ok) {
+      const errorData = await res.json();
+      if (res.status === 404) {
+        console.warn(`File not found: ${path} in ${repo}`);
+        return null;
+      }
+      throw new Error(`Failed to fetch file content: ${errorData.error || errorData.details || res.statusText}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error in fetchFileContent:', error);
+    return null;
   }
-
-  return res.json();
 }
 
 // Update content of a file in a repo
