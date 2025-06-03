@@ -16,9 +16,9 @@ module.exports = (requiredRole) => {
             return res.status(401).json({ message: "Utilisateur non authentifié" });
         }
 
-        if (user.role !== requiredRole) {
-            return res.status(403).json({ message: "Accès non autorisé" });
-        }
+        // if (user.role !== requiredRole) {
+        //     return res.status(403).json({ message: "Accès non autorisé au client" });
+        // }
 
         // L'utilisateur a le bon rôle
         next();

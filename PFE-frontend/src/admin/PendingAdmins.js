@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, CircularProgress, Snackbar, Alert } from "@mui/material";
-import { approveAdmin } from "../services/api";
+import { approveClient } from "../services/api";
 
 const API_URL = "http://localhost:5000"; 
 
@@ -13,7 +13,7 @@ const PendingAdmins = () => {
   const fetchPendingAdmins = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/profils/admins/pending`,
+      const response = await axios.get(`${API_URL}/clients/pending`,
         {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -30,9 +30,9 @@ const PendingAdmins = () => {
 
   const handleApprove = async (id) => {
     try {
-      await approveAdmin(id);
-      setSnackbar({ open: true, message: "Admin approuvé avec succès", severity: "success" });
-      setPendingAdmins((prev) => prev.filter((admin) => admin.id !== id));
+      await approveClient(id);
+      setSnackbar({ open: true, message: "Client approuvé avec succès", severity: "success" });
+      setPendingAdmins((prev) => prev.filter((client) => client.id !== id));
     } catch (error) {
       setSnackbar({ open: true, message: "Erreur lors de l'approbation", severity: "error" });
     }
@@ -45,7 +45,7 @@ const PendingAdmins = () => {
   return (
     <Paper sx={{ padding: 3, marginTop: 10, marginLeft: 8 }}>
       <Typography variant="h5" gutterBottom color="#F39325">
-        Comptes Admins en attente d'approbation
+        Comptes clients en attente d'approbation
       </Typography>
 
       {loading ? (

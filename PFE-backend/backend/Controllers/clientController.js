@@ -1,11 +1,11 @@
 const { User } = require("../Models");
 
-exports.getAdmins = async (req, res) => {
+exports.getClients = async (req, res) => {
   try {
-    const admins = await User.findAll({
-      where: { role: "admin", isApproved: true }
+    const clients = await User.findAll({
+      where: { role:"client", isApproved: true }
     });
-    res.json(admins);
+    res.json(clients);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -24,13 +24,13 @@ exports.getAdmins = async (req, res) => {
 // };
 
 
-exports.getPendingAdmins = async (req, res) => {
+exports.getPendingClients = async (req, res) => {
     try {
       const pendingUsers = await User.findAll({
         where: {
           isApproved: false,
           isVerified: true, 
-          role:"admin",
+          role:"client",
         },
         attributes: ['id', 'username', 'email', 'createdAt'],
       });
@@ -41,7 +41,7 @@ exports.getPendingAdmins = async (req, res) => {
     }
   };
   
-  exports.createAdmin = async (req, res) => {
+  exports.createClient = async (req, res) => {
     try {
       const { username, email, password } = req.body;
   
@@ -51,16 +51,16 @@ exports.getPendingAdmins = async (req, res) => {
         return res.status(400).json({ message: "Cet email est déjà utilisé." });
       }
   
-      const newAdmin = await User.create({
+      const newClient = await User.create({
         username,
         email,
         password,
-        role: "admin",
+        role: "client",
         isApproved: true,
         isVerified: true,
       });
   
-      res.status(201).json(newAdmin);
+      res.status(201).json(newClient);
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Erreur serveur lors de la création" });
@@ -68,36 +68,36 @@ exports.getPendingAdmins = async (req, res) => {
   };
   
 
-exports.updateAdmin = async (req, res) => {
+exports.updateClient = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = (({ username, email, isApproved }) => ({ username, email, isApproved }))(req.body);
-    const admin = await User.findByPk(id);
-    if (!admin || admin.role !== "admin") {
-      return res.status(404).json({ message: "Admin introuvable" });
+    const client = await User.findByPk(id);
+    if (!client || client.role !== "client") {
+      return res.status(404).json({ message: "Client introuvable" });
     }
-    await admin.update(updates);
-    res.json(admin);
+    await client.update(updates);
+    res.json(client);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.deleteAdmin = async (req, res) => {
+exports.deleteClient = async (req, res) => {
   try {
     const { id } = req.params;
-    const admin = await User.findByPk(id);
-    if (!admin || admin.role !== "admin") {
-      return res.status(404).json({ message: "Admin introuvable" });
+    const client = await User.findByPk(id);
+    if (!client || client.role !== "client") {
+      return res.status(404).json({ message: "Client introuvable" });
     }
-    await admin.destroy();
-    res.json({ message: "Admin supprimé" });
+    await client.destroy();
+    res.json({ message: "Client supprimé" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-exports.approveAdmin = async (req, res) => {
+exports.approveClient = async (req, res) => {
   try {
     const userId = req.params.Id;
     const user = await User.findByPk(userId);

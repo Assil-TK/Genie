@@ -245,10 +245,10 @@ export const registerUser = async (userData) => {
       role: userData.role,
     };
 
-    if (userData.role === "super-admin" && userData.superadminKey?.trim()) {
-      payload.superadminKey = userData.superadminKey;
-    }
-    console.log("Payload envoyé:", payload);
+    // if (userData.role === "admin" && userData.superadminKey?.trim()) {
+    //   payload.superadminKey = userData.superadminKey;
+    // }
+    // console.log("Payload envoyé:", payload);
 
     const response = await axios.post(`${API_URL}/auth/register`, payload, {
       headers: { "Content-Type": "application/json" },
@@ -357,50 +357,50 @@ export const logOut = () => {
   window.location.href = "/login";
 };
 
-export const getAdmins = async () => {
+export const getClients = async () => {
   const token = localStorage.getItem("token");
-  const res = await axios.get(`${API_URL}/profils/admins`, {
+  const res = await axios.get(`${API_URL}/clients`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
-export const getPendingAdmins = async () => {
+export const getPendingClients = async () => {
   const token = localStorage.getItem("token");
-  const res = await axios.get(`${API_URL}/profils/admins/pending`, {
+  const res = await axios.get(`${API_URL}/clients/pending`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
-export const createAdmin = async (payload) => {
+export const createClient = async (payload) => {
   const token = localStorage.getItem("token");
-  const res = await axios.post(`${API_URL}/profils/admins`, payload, {
+  const res = await axios.post(`${API_URL}/clients/create`, payload, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
-export const updateAdmin = async (id, payload) => {
+export const updateClient = async (id, payload) => {
   const token = localStorage.getItem("token");
-  const res = await axios.put(`${API_URL}/profils/admins/${id}`, payload, {
+  const res = await axios.put(`${API_URL}/clients/update/${id}`, payload, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
-export const deleteAdmin = async (id) => {
+export const deleteClient = async (id) => {
   const token = localStorage.getItem("token");
-  const res = await axios.delete(`${API_URL}/profils/admins/${id}`, {
+  const res = await axios.delete(`${API_URL}/clients/delete/${id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
-export const approveAdmin = async (id) => {
+export const approveClient = async (id) => {
   const token = localStorage.getItem("token");
   const res = await axios.put(
-    `${API_URL}/profils/admins/approve/${id}`,
+    `${API_URL}/clients/approve/${id}`,
     {},
     {
       headers: {

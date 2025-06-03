@@ -1,4 +1,5 @@
 const User = require("../Models/userModel");
+const Connexion = require("../Models/connexion");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {sendVerificationEmail} = require ("../utils/email");
@@ -12,7 +13,7 @@ const LOCK_TIME = 5 * 60 * 1000;
 
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, role, superadminKey } = req.body;
+    const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -20,21 +21,13 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     let isApproved = false;
-
-    // if (role === "super-admin") {
-    //   if (superadminKey !== process.env.SUPER_ADMIN_SECRET) {
-    //     return res.status(403).json({ message: "Clé super-admin invalide" });
-    //   }
-    //   isApproved = true;
-    // }
 
     const user = await User.create({
       username,
       email,
       password: hashedPassword,
-      role,
+      role: "client",
       isVerified: false,
       isApproved,
     });
@@ -60,7 +53,6 @@ exports.register = async (req, res) => {
   }
 };
 
-
 exports.verifyEmail = async (req, res) => {
   const { token } = req.params;
   try {
@@ -77,9 +69,6 @@ exports.verifyEmail = async (req, res) => {
 
     user.isVerified = true;
 
-    //  if (user.role === 'super-admin') {
-    //    user.isApproved = true;
-    //  }
     await user.save();
 
     res.status(200).json({ message: "Email vérifié avec succès" });
@@ -97,31 +86,49 @@ exports.login = async (req, res) => {
     if (!user) return res.status(401).json({ message: "Identifiants invalides" });
 
     // Vérifier si le compte est bloqué
-    if (user.failedAttempts >= 3) {
-      return res.status(403).json({ message: "Compte bloqué après 3 échecs, réessayez plus tard" });
+    // if (user.failedAttempts >= 3) {
+    //   return res.status(403).json({ message: "Compte bloqué après 3 échecs, réessayez plus tard" });
+    // }
+    const now = new Date();
+    if (user.lockedUntil && user.lockedUntil > now) {
+      const seconds = Math.ceil((user.lockedUntil - now) / 1000);
+      return res.status(403).json({ message: `Compte bloqué. Réessayez dans ${seconds} secondes.` });
     }
 
     const valid = await bcrypt.compare(password, user.password);
 
     if (!valid) {
       user.failedAttempts += 1;
+      if (user.failedAttempts >= 3) {
+        user.lockedUntil = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+      }
       await user.save();
       return res.status(401).json({ message: "Identifiants invalides" });
     }
 
-    // Vérification de l'email
-    if (!user.isVerified) {
-      return res.status(403).json({ message: "Veuillez vérifier votre adresse email avant de vous connecter." });
-    }
-
-    // Vérification de l'approbation (sauf super-admin)
-    if (user.role !== 'super-admin' && !user.isApproved) {
-      return res.status(403).json({ message: "Votre compte est en attente de validation par un super-admin." });
+    // // Vérification de l'email
+    // if (!user.isVerified) {
+    //   return res.status(403).json({ message: "Veuillez vérifier votre adresse email avant de vous connecter." });
+    // }
+    // // Vérification de l'approbation (sauf super-admin)
+    // if (user.role !== 'super-admin' && !user.isApproved) {
+    //   return res.status(403).json({ message: "Votre compte est en attente de validation par un super-admin." });
+    // }
+// Vérifications spécifiques pour les clients uniquement
+    if (user.role === 'client') {
+      if (!user.isVerified) {
+        return res.status(403).json({ message: "Veuillez vérifier votre email" });
+      }
+      if (!user.isApproved) {
+        return res.status(403).json({ message: "Compte en attente d'approbation par l'admin" });
+      }
     }
 
     // Réinitialisation des tentatives après succès
     user.failedAttempts = 0;
+    user.lockedUntil = null;
     await user.save();
+    await Connexion.create({ userId: user.id });
 
     // Générer le token JWT
     const token = jwt.sign(
@@ -135,8 +142,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la connexion", error: error.message });
   }
 };
-
-
 
 const { sendResetPasswordEmail } = require("../utils/email");
 

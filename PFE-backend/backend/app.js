@@ -15,7 +15,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoute');
 //var pagesRouter = require('./routes/pageRoute');
 var modificationRouter = require('./routes/modificationRoute');
-var adminRoutes = require("./routes/adminRoutes");
+var clientRoutes = require("./routes/clientRoutes");
 var authRouter = require('./routes/authRoute');
 var statisticsRoutes = require("./routes/statisticsRoutes");
 var aiRouter = require('./routes/aiRoute');
@@ -54,7 +54,7 @@ app.use('/auth', authRouter)
 app.use('/statistics', statisticsRoutes);
 app.use('/ai', aiRouter);
 app.use('/modification', modificationRouter);
-app.use('/profils',adminRoutes);
+app.use('/clients',clientRoutes);
 
 app.use('/api/files', fileRoutes);
 app.use('/operations', operationRoutes);

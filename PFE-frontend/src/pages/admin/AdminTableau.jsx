@@ -5,6 +5,8 @@ import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, BarChart, 
 
 const AdminTableau = () => {
   const [stats, setStats] = useState(null);
+  const COLORS = ['#FFBB28', '#00C49F', '#FF4C4C'];
+
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -60,7 +62,7 @@ const AdminTableau = () => {
           <Card sx={{ boxShadow: 3 }}>
             <CardContent>
               <Typography variant="h6" color="textSecondary" gutterBottom>Connexions récentes</Typography>
-              <LineChart width={450} height={250} data={stats.logins.map(l => ({
+              <LineChart width={380} height={250} data={stats.logins.map(l => ({
                 day: l.day,
                 count: parseInt(l.count)
               }))}>
@@ -88,6 +90,51 @@ const AdminTableau = () => {
                 <Bar dataKey="creation" fill="#82ca9d" />
                 <Bar dataKey="modification" fill="#8884d8" />
               </BarChart>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={6}>
+          <Card sx={{ boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" color="textSecondary" gutterBottom>
+                Projets créés (7 derniers jours)
+              </Typography>
+              <LineChart width={380} height={300} data={stats.projetsByDate.map(p => ({
+                date: p.date,
+                count: parseInt(p.count)
+              }))}>
+                <XAxis dataKey="date" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Line type="monotone" dataKey="count" stroke="#2196f3" strokeWidth={2} />
+              </LineChart>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={6}>
+          <Card sx={{ boxShadow: 3 }}>
+            <CardContent>
+              <Typography variant="h6" color="textSecondary" gutterBottom>
+                Statut des déploiements de projets
+              </Typography>
+              <PieChart width={400} height={300}>
+                <Pie
+                  data={stats.statusCounts.map((s, index) => ({
+                    name: s.deploymentStatus,
+                    value: parseInt(s.count)
+                  }))}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                  dataKey="value"
+                >
+                  {stats.statusCounts.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
             </CardContent>
           </Card>
         </Grid>
