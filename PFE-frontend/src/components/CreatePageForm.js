@@ -12,70 +12,67 @@ import {
   TextField,
   Button,
   Typography,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import ProjectSelector from './ProjectSelector';
 import PreviewBox3 from './PreviewBox3';
 import AIFormPopup from './AIFormPopup';
-
+import ImageUploadButton from './ImageUploadButto2';
 
 export default function CreatePageForm() {
   const [pageName, setPageName] = useState('');
   const [description, setDescription] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [error, setError] = useState('');
+
+  // Notification state
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' });
+
   const [filePaths, setFilePaths] = useState([]);
   const [selectedFilePath, setSelectedFilePath] = useState(null);
+  const [projectName, setProjectName] = useState(null);
 
   useEffect(() => {
     const loadPaths = async () => {
       try {
         const paths = await fetchFilePaths();
-        console.log('📁 filePaths:', paths);
         setFilePaths(paths);
         if (paths.length > 0) {
           setSelectedFilePath(paths[0].path);
         }
       } catch (err) {
-        console.error("Erreur récupération chemins :", err);
-        setError("Impossible de charger les chemins de fichiers.");
+        setNotification({ open: true, message: "Impossible de charger les chemins de fichiers.", severity: 'error' });
       }
     };
     loadPaths();
+
+    const loadProject = async () => {
+      const projet = await getActiveProject();
+      if (projet?.name) {
+        setProjectName(projet.name);
+      }
+    };
+    loadProject();
   }, []);
 
   const handleGenerate = async () => {
     setLoading(true);
-    setError('');
-    setSuccessMsg('');
+    setNotification({ open: false, message: '', severity: 'info' });
 
     try {
       const res = await generateCode(description);
-      const generatedCode = res;
-      setCode(generatedCode);
-      setSuccessMsg('Code généré avec succès !');
+      setCode(res);
+      setNotification({ open: true, message: 'Code généré avec succès !', severity: 'success' });
 
       if (selectedFilePath) {
-        console.log('🔄 syncToFrontend (after generate):', {
-          relativePath: selectedFilePath,
-          content: generatedCode
-        });
-
         await syncToFrontend({
           relativePath: selectedFilePath,
-          content: generatedCode
+          content: res,
         });
-      } else {
-        console.warn('⚠️ Aucun chemin sélectionné pour syncToFrontend');
       }
     } catch (err) {
-      console.error(err);
-      setError('Erreur lors de la génération du code.');
+      setNotification({ open: true, message: 'Erreur lors de la génération du code.', severity: 'error' });
     }
 
     setLoading(false);
@@ -85,84 +82,98 @@ export default function CreatePageForm() {
     try {
       const projet = await getActiveProject();
       if (!projet?.id) {
-        alert("Aucun projet actif n’est sélectionné.");
+        setNotification({ open: true, message: "Aucun projet actif n’est sélectionné.", severity: 'error' });
         return;
       }
 
       await createFile({ pageName, code, projectId: projet.id });
-      alert('Page créée avec succès !');
+      setNotification({ open: true, message: 'Page créée avec succès !', severity: 'success' });
     } catch (err) {
-      console.error(err);
-      alert('Erreur lors de la création du fichier.');
+      setNotification({ open: true, message: 'Erreur lors de la création du fichier.', severity: 'error' });
     }
   };
 
   const handleCodeChange = async (e) => {
     const newValue = e.target.value;
     setCode(newValue);
-    setError('');
-    setSuccessMsg('');
+    setNotification({ open: false, message: '', severity: 'info' });
 
     if (selectedFilePath) {
-      console.log('🔄 syncToFrontend (onChange):', {
-        relativePath: selectedFilePath,
-        content: newValue
-      });
-
       try {
         await syncToFrontend({
           relativePath: selectedFilePath,
-          content: newValue
+          content: newValue,
         });
       } catch (err) {
-        console.error('Erreur de synchronisation en live:', err);
-        setError('o');
+        setNotification({ open: true, message: 'Erreur de synchronisation en live.', severity: 'error' });
       }
-    } else {
-      console.warn(' Aucun chemin sélectionné pour syncToFrontend');
     }
+  };
+
+  const handleCloseNotification = () => {
+    setNotification((prev) => ({ ...prev, open: false }));
   };
 
   return (
     <Box sx={{ p: 4, maxWidth: 800, margin: '0 auto' }}>
       <AIFormPopup onPromptReady={(newPrompt) => setDescription(newPrompt)} />
 
-      {/* Sélecteur de projet */}
       <Box sx={{ ml: -3, mb: 2 }}>
         <ProjectSelector />
       </Box>
 
-
-      {/* Description de l’objectif */}
       <Typography variant="h6" fontFamily="Poppins, sans-serif" gutterBottom textAlign="center" color='#1B374C'>
         Décrire ce que vous souhaitez créer
       </Typography>
 
-      <TextField
-        fullWidth
-        multiline
-        rows={4}
-        placeholder="Décrivez ce que le fichier doit faire..."
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        variant="outlined"
-        InputProps={{
-          sx: {
-            padding: '1rem',
-            borderRadius: '10px',
-            fontSize: '1rem',
-            backgroundColor: '#fff',
-          },
-          disableUnderline: true,
-        }}
+      {/* Wrapper box for description input + image upload button */}
+      <Box
         sx={{
+          position: 'relative',
           width: '90%',
-          marginBottom: '1rem',
-          alignSelf: 'center',
+          margin: '0 auto 1rem auto',
         }}
-      />
+      >
+        <TextField
+          fullWidth
+          multiline
+          rows={4}
+          placeholder="Décrivez ce que le fichier doit faire..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          variant="outlined"
+          InputProps={{
+            sx: {
+              padding: '1rem',
+              borderRadius: '10px',
+              fontSize: '1rem',
+              backgroundColor: '#fff',
+              paddingRight: '5rem', // add right padding so text doesn't go under button
+            },
+            disableUnderline: true,
+          }}
+        />
 
-      {/* Bouton Générer */}
+        {projectName && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 12,
+              right: 12,
+              zIndex: 10,
+            }}
+          >
+            <ImageUploadButton
+              pageName="name"
+              projectName={projectName}
+              onUploadComplete={(imagePath) =>
+                setDescription((prev) => prev + (prev ? '\n' : '') + imagePath)
+              }
+            />
+          </Box>
+        )}
+      </Box>
+
       <Box textAlign="center" mb={6}>
         <Button
           variant="contained"
@@ -186,15 +197,6 @@ export default function CreatePageForm() {
         </Button>
       </Box>
 
-      {/* Messages de succès / erreur */}
-      {successMsg && (
-        <Typography color="green" textAlign="center">{successMsg}</Typography>
-      )}
-      {error && (
-        <Typography color="red" textAlign="center">{error}</Typography>
-      )}
-
-      {/* Code généré + Preview */}
       {code ? (
         <>
           <h4
@@ -261,7 +263,6 @@ export default function CreatePageForm() {
         </p>
       )}
 
-      {/* Création de la page */}
       <Box
         sx={{
           marginTop: '3rem',
@@ -319,7 +320,18 @@ export default function CreatePageForm() {
           {loading ? 'Création...' : 'Valider'}
         </Button>
       </Box>
+
+      {/* Snackbar Notification */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={4000}
+        onClose={handleCloseNotification}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
-
 }

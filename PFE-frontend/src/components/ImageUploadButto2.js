@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import ImageIcon from '@mui/icons-material/Image';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { uploadImage } from '../services/api';
 
 const ImageUploadButton = ({ projectName, pageName, onUploadComplete }) => {
-
   const fileInputRef = useRef(null);
 
   const handleIconClick = () => {
@@ -19,11 +18,10 @@ const ImageUploadButton = ({ projectName, pageName, onUploadComplete }) => {
       console.error('Missing projectName or pageName.');
       return;
     }
-      console.log("🔍 Rendered with projectName:", projectName);
-  console.log("🔍 Rendered with pageName:", pageName);
+
     try {
       const formData = new FormData();
-      formData.append('image', file); // field name must match multer setup
+      formData.append('image', file);
       formData.append('projectName', projectName);
       formData.append('pageName', pageName);
 
@@ -31,7 +29,6 @@ const ImageUploadButton = ({ projectName, pageName, onUploadComplete }) => {
       console.log('✅ Upload result:', result);
 
       if (onUploadComplete) onUploadComplete(result.path);
-
     } catch (err) {
       console.error('❌ Upload failed:', err);
     }
@@ -48,7 +45,7 @@ const ImageUploadButton = ({ projectName, pageName, onUploadComplete }) => {
       />
       <Tooltip title="Upload an image">
         <IconButton onClick={handleIconClick}>
-          <ImageIcon />
+          <AddPhotoAlternateIcon />
         </IconButton>
       </Tooltip>
     </>

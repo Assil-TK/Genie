@@ -9,6 +9,8 @@ import EventPage from "./pages/EventPage";
 import PromotionPage from "./pages/PromotionPage";
 import Test from "./pages/Test";
 import Testtt from "./pages/Testtt";
+import Create from "./pages/Create";
+import Create1 from "./pages/Create1";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -17,8 +19,10 @@ const AppRoutes = () => {
       <Route path="/eventpage" element={<EventPage />} />
       <Route path="/promotionpage" element={<PromotionPage />} />
       <Route path="/test" element={<Test />} />
-
       <Route path="/testtt" element={<Testtt />} />
+      <Route path="/create" element={<Create />} />
+
+      <Route path="/create1" element={<Create1 />} />
     </Routes>
   );
 };
