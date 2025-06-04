@@ -89,7 +89,7 @@ async function deployToVercelFromHost(buildPath, projectName) {
 
   return new Promise((resolve, reject) => {
     const cmd = `vercel deploy ${buildPath} --prod --token=${VERCEL_TOKEN} --confirm`;
-    console.log('🚀 Deploying to Vercel with command:', cmd);
+    console.log(' Deploying to Vercel with command:', cmd);
 
     exec(cmd, { maxBuffer: 1024 * 500 }, (err, stdout, stderr) => {
       if (err) {

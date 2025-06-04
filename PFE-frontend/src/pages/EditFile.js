@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 import { fetchUser, fetchFileContent, updateFileContent } from '../api/githubApi';
 import CommitDeployButton from '../components/CommitDeployButton';
@@ -12,6 +14,9 @@ import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
 import ImageUploadButton from '../components/ImageUploadButton';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const EditFile = () => {
   const { state } = useLocation();
@@ -25,16 +30,16 @@ const EditFile = () => {
   const [sha, setSha] = useState('');
   const [loadingAI, setLoadingAI] = useState(false);
 
+  const [snack, setSnack] = useState({ open: false, message: '', severity: 'success' });
+
   const navigate = useNavigate();
 
-  // Fetch logged-in user
   useEffect(() => {
     fetchUser()
       .then(res => setUser(res.user))
       .catch(() => (window.location.href = '/'));
   }, []);
 
-  // Load selected file content
   useEffect(() => {
     const loadFile = async () => {
       if (!selectedRepo || !selectedFile) return;
@@ -56,7 +61,6 @@ const EditFile = () => {
     loadFile();
   }, [selectedRepo, selectedFile, user]);
 
-  // Send all components once user is loaded
   useEffect(() => {
     if (user) sendAllComponentsToBackend();
   }, [user]);
@@ -92,7 +96,6 @@ const EditFile = () => {
         for (const item of response.data) {
           if (item.type === 'dir') {
             const dirName = item.name.toLowerCase();
-
             if (dirName === 'component' || dirName === 'components') {
               const compFolderFiles = await axios.get(item.url);
               for (const file of compFolderFiles.data) {
@@ -112,8 +115,6 @@ const EditFile = () => {
       };
 
       const files = await fetchComponentFiles();
-      console.log('Sending these component files to the backend:', files);
-
       await axios.post('http://localhost:5010/api/save-imported-components', { files });
     } catch (err) {
       console.error('Failed to send components to backend:', err.response?.data || err.message);
@@ -124,11 +125,10 @@ const EditFile = () => {
     try {
       const sanitizedFile = selectedFile.replace(/^\/+/, '');
       await updateFileContent(selectedRepo, sanitizedFile, content, sha, commitMessage || 'Update file');
-      alert('File saved successfully!');
-
+      setSnack({ open: true, message: 'File saved successfully!', severity: 'success' });
     } catch (err) {
       console.error('Save failed:', err);
-      alert('Failed to save');
+      setSnack({ open: true, message: 'Failed to save file.', severity: 'error' });
     }
   };
 
@@ -145,24 +145,23 @@ const EditFile = () => {
       updateFileContentInPlatform(updatedCode, selectedFile);
     } catch (error) {
       console.error('Error communicating with AI API:', error);
-      alert('Failed to get AI response');
+      setSnack({ open: true, message: 'Failed to get AI response.', severity: 'error' });
     } finally {
       setLoadingAI(false);
     }
   };
 
+  const handleCloseSnack = () => setSnack({ ...snack, open: false });
+
   if (loading) return <p>Loading file...</p>;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Header at the top */}
       <Header />
 
-      {/* Main content with sidebar and editor */}
       <div style={{ display: 'flex', flex: 1 }}>
-        {/* Sidebar on the left */}
         <Sidebar />
 
-        {/* Main editor content */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ width: '80%', transform: 'translateX(1%)' }}>
             <h1 style={{ fontFamily: 'Fira Sans, sans-serif', color: '#ff9800', textAlign: 'center', marginTop: '8%' }}>
@@ -170,35 +169,17 @@ const EditFile = () => {
             </h1>
 
             <div style={{ marginTop: '3%' }}>
-              <UserInfoWithTree
-                user={user}
-                selectedRepo={selectedRepo}
-                selectedFile={selectedFile}
-              />
+              <UserInfoWithTree user={user} selectedRepo={selectedRepo} selectedFile={selectedFile} />
             </div>
 
-            {/* ===== Main Container: textarea + preview + AI box ===== */}
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '2rem', backgroundColor: '#ffffff',
-              width: '118%',
-              borderRadius: '8px',
-              padding: '1rem 1.5rem',
-              marginBottom: '1.5rem',
-              transform: 'translateX(-6%)',
-              color: '#333',
-              border: '1px solid #ddd'
+              width: '118%', borderRadius: '8px', padding: '1rem 1.5rem', marginBottom: '1.5rem',
+              transform: 'translateX(-6%)', color: '#333', border: '1px solid #ddd'
             }}>
-              {/* Row: Textarea + Preview */}
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '1rem',
-                  alignItems: 'flex-start',
-                  width: '100%',
-                  justifyContent: 'center',
-                }}
-              >
-                {/* Textarea */}
+              <div style={{
+                display: 'flex', gap: '1rem', alignItems: 'flex-start', width: '100%', justifyContent: 'center'
+              }}>
                 <textarea
                   value={content}
                   onChange={(e) => {
@@ -207,31 +188,18 @@ const EditFile = () => {
                   }}
                   rows={25}
                   style={{
-                    flex: 1,
-                    minWidth: '300px',
-                    maxWidth: '50%',
-                    height: '600px',
-                    whiteSpace: 'pre',
-                    fontFamily: "'Fira Code', monospace",
-                    padding: '1rem',
-                    borderRadius: '12px',
-                    border: '1px solid #ccc',
-                    background: '#f9f9fb',
-                    color: '#333',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.5',
-                    resize: 'none',
-                    overflowY: 'scroll',
+                    flex: 1, minWidth: '300px', maxWidth: '50%', height: '600px', whiteSpace: 'pre',
+                    fontFamily: "'Fira Code', monospace", padding: '1rem', borderRadius: '12px', border: '1px solid #ccc',
+                    background: '#f9f9fb', color: '#333', fontSize: '0.95rem', lineHeight: '1.5',
+                    resize: 'none', overflowY: 'scroll'
                   }}
                 />
 
-                {/* Preview */}
                 <div style={{ flex: 1.4, minWidth: '400px' }}>
                   <PreviewBox />
                 </div>
               </div>
 
-              {/* AIPromptBox centered below */}
               <div style={{ width: '80%', marginTop: '1rem' }}>
                 <AIPromptBox
                   prompt={prompt}
@@ -239,29 +207,26 @@ const EditFile = () => {
                   handleAIUpdate={handleAIUpdate}
                   loadingAI={loadingAI}
                 >
-                  {/* Injected upload button into bottom right corner */}
                   <ImageUploadButton
                     selectedRepo={selectedRepo}
                     onPathReady={(imagePath) => setPrompt(prev => prev + (prev ? '\n' : '') + imagePath)}
                   />
                 </AIPromptBox>
               </div>
-
-
             </div>
 
-            {/* ===== Second Container: Commit Input + Buttons ===== */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3rem', gap: '1rem' }}>
-              {/* Commit Message Input */}
-              <div style={{ width: '80%' }}>
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '3rem', gap: '1rem',
+              padding: '0 2rem'
+            }}>
+              <div style={{ width: '100%' }}>
                 <CommitInput
                   commitMessage={commitMessage}
                   setCommitMessage={setCommitMessage}
                 />
               </div>
 
-              {/* Buttons: Save + Deploy */}
-              <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
                 <button
                   onClick={handleSave}
                   style={{
@@ -272,20 +237,32 @@ const EditFile = () => {
                     border: 'none',
                     borderRadius: '4px',
                     cursor: 'pointer',
+                    width: '140px'
                   }}
                 >
                   Save
                 </button>
 
-                
+                {/* You can add your deploy button here */}
+                {/* <CommitDeployButton /> */}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        open={snack.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnack}
+      >
+        <Alert onClose={handleCloseSnack} severity={snack.severity} sx={{ width: '100%' }}>
+          {snack.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
-
 };
 
 export default EditFile;
