@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { Box, Fade, Button, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
+import gifAnimation from '../../assets/yesfull222.gif';
+
 
 // Background animation
 const gradientMove = keyframes`
@@ -120,6 +122,7 @@ const WelcomeScreen = () => {
             zIndex: 2,
             maxWidth: '50%',
             textAlign: 'left',
+            ml: { xs: 2, md: 8 },
           }}
         >
           <Typography
@@ -213,7 +216,22 @@ const WelcomeScreen = () => {
         </Box>
 
         {/* RIGHT: Empty space */}
-        <Box sx={{ width: '40%' }} />
+        <Box
+  sx={{
+    width: '45%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  }}
+>
+  <img
+    src={gifAnimation}
+    alt="Animated Visual"
+    style={{ width: '100%', maxWidth: '560px', height: 'auto', marginTop:'40px' }}
+  />
+</Box>
+
       </Box>
     </Fade>
   );
