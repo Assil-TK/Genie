@@ -228,7 +228,7 @@ const WelcomeScreen = () => {
   <img
     src={gifAnimation}
     alt="Animated Visual"
-    style={{ width: '100%', maxWidth: '560px', height: 'auto', marginTop:'40px' }}
+    style={{ width: '100%', maxWidth: '560px', height: 'auto', marginTop:'40px',filter: 'drop-shadow(0 0 12px rgba(223, 215, 211, 0.4))', }}
   />
 </Box>
 
