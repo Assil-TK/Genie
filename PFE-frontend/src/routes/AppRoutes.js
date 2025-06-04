@@ -44,6 +44,7 @@ import FileContent2 from '../pages/filecontent2';
 import Menu from '../pages/Menu';
 import DeployGit from '../pages/deploygit';
 
+
 import { removeFromFrontend } from "../services/api"; // Cleanup API
 
 const DynamicPage = () => {
@@ -132,6 +133,7 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/admin/download" element={<ProjectDownload />} />
             <Route path="/admin/deploy" element={<ProjectDeploy />} />
             <Route path="/admin/avis" element={<AvisInterface />} />
+            
             <Route path="/admin/tableau" element={<AdminTableau />} />
             <Route path="/repo-explorer" element={<RepoExplorer />} />
             <Route path="/edit-file" element={<EditFile />} />
@@ -140,66 +142,7 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/home" element={<Menu />} />
             <Route path="/deploygit" element={<DeployGit/>} />
             <Route path="/filecontent2" element={<FileContent2 />} />
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 </Routes>
         </ProjectProvider>
       </Box>

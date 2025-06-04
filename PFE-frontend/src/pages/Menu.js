@@ -5,8 +5,9 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import {
   FileUpload, Add, Edit, FileDownload, CloudUpload, FolderDelete,
-  Comment, WorkHistory, ManageHistory
+  Comment, WorkHistory
 } from '@mui/icons-material';
+import animation from '../assets/Animation1.gif'; // Import your gif
 
 // Heading animation: fadeInUp
 const fadeInUp = keyframes`
@@ -41,8 +42,8 @@ const sections = [
   { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history", color: "#dde6f2" },
 ];
 
-const fadeDuration = 600; // milliseconds
-const intervalDelay = 400; // ms delay between each item fade-in
+const fadeDuration = 600;
+const intervalDelay = 400;
 
 const MenuPage = () => {
   const navigate = useNavigate();
@@ -64,7 +65,31 @@ const MenuPage = () => {
   }, []);
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        position: 'relative',
+        minHeight: '100vh',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Background image */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: `url(${animation})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          zIndex: -1,
+          opacity: 1,
+        }}
+      />
+
       <Header />
       <Sidebar />
 
@@ -119,9 +144,9 @@ const MenuPage = () => {
                         boxShadow: 'none',
                       },
                       display: 'flex',
-                      flexDirection: 'column', // Stack vertically
-                      alignItems: 'center',     // Center horizontally
-                      justifyContent: 'center', // Center vertically
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       gap: 1,
                       fontFamily: 'Poppins',
                       animationName: `${popScale}`,
@@ -135,7 +160,7 @@ const MenuPage = () => {
                     <Typography
                       variant="body1"
                       sx={{
-                        fontSize: '1.25rem', // Slightly bigger
+                        fontSize: '1.25rem',
                         color: '#1B374C',
                         textAlign: 'center',
                         marginTop: 1,
@@ -144,7 +169,6 @@ const MenuPage = () => {
                       {item.text}
                     </Typography>
                   </Paper>
-
                 </Fade>
               </Grid>
             );

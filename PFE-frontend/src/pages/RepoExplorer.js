@@ -6,6 +6,7 @@ import FileTree from '../components/FileTree';
 import { Typography, Box, Divider } from '@mui/material';
 import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
+import animation from '../assets/Animation1.gif';
 import { keyframes } from '@mui/system';
 
 const fadeInUp = keyframes`
@@ -201,15 +202,19 @@ const RepoExplorer = () => {
         </Box>
 
         <Box
-          sx={{
-            flexGrow: 1,
-            p: 4,
-            overflowY: 'auto',
-            backgroundColor: '#fafafa',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
+  sx={{
+    flexGrow: 1,
+    p: 4,
+    overflowY: 'auto',
+    backgroundImage: `url(${animation})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+  }}
+>
+
           <Box sx={{ mb: 3, marginTop: 15 }}>
             <Typography
               variant="h2"
