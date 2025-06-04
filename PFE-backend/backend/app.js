@@ -64,6 +64,7 @@ app.use('/api/projets', projetRoutes);
 app.use('/deploy', deployRoute);
 app.use("/api/avis", avisRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api', fileRoutes);
 // Middleware 
 app.use((req, res, next) => {
     next(createError(404, 'Route introuvable'));

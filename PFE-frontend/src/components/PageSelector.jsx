@@ -59,7 +59,8 @@ const PageSelector = () => {
                     ))}
                 </Select>
             </FormControl>
-      {selectedPage && <EditablePreview pageName={selectedPage} />}
+      {selectedPage && <EditablePreview pageName={selectedPage} projectName={activeProject} />}
+
       </>
       )}
     </Box>

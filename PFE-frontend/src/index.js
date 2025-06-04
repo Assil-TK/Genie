@@ -5,6 +5,7 @@ import { CssBaseline } from "@mui/material";
 import { BrowserRouter } from "react-router-dom"; // Ajoutez cette importation
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(

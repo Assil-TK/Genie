@@ -12,14 +12,15 @@ import ImageUploadButton from './ImageUploadButto2';
 
 
 
-const EditablePreview = ({ pageName }) => {
+const EditablePreview = ({ pageName, projectName }) => {
     const [instructions, setInstructions] = useState('');
     const [originalCode, setOriginalCode] = useState('');
     const [modifiedCode, setModifiedCode] = useState('');
     const [error, setError] = useState(null);
     const [successMsg, setSuccessMsg] = useState(null);
     const [filePaths, setFilePaths] = useState([]);
-    const [loading, setLoading] = useState(false); // ✅ Added loading state
+    const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         const loadPaths = async () => {
@@ -158,11 +159,13 @@ ${modifiedCode}
   />
   <Box sx={{ position: 'absolute', bottom: 10, right: 10 }}>
     <ImageUploadButton
-  pageName={pageName}
-  onUploadComplete={(imagePath) =>
-    setInstructions((prev) => prev + (prev ? '\n' : '') + imagePath)
-  }
-/>
+        pageName={pageName}
+        projectName={projectName.name} 
+        onUploadComplete={(imagePath) =>
+          setInstructions((prev) => prev + (prev ? '\n' : '') + imagePath)
+        }
+        
+      />
 
   </Box>
 </Box>

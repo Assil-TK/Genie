@@ -1,3 +1,4 @@
+import FileContent3 from '../importedproject/user_1/projects/hello/src/pages/filecontent3';
 import React, { useEffect } from "react";
 import { Routes, Route, useLocation, useParams } from "react-router-dom";
 import { Box } from "@mui/material";
@@ -166,6 +167,39 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <Route path="/filecontent3" element={<FileContent3 />} />
 </Routes>
         </ProjectProvider>
       </Box>

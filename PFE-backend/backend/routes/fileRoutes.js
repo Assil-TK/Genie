@@ -23,7 +23,12 @@ router.post("/ai/save",verifyToken, aiController.saveEdit);
 router.post('/savePageCode',verifyToken,fileController.savePageCode); //utilisé modif
 router.post('/syncToFrontend', verifyToken, fileController.writeToFrontendProject);
 router.post('/removeFromFrontend', verifyToken, fileController.removeFromFrontendRoutes);
-router.post('/upload-image', verifyToken, upload.single("image"), fileController.uploadImage);
+router.post(
+  '/upload-image',
+  verifyToken,         // your JWT/auth middleware
+  upload.single("image"), // multer middleware to handle single file named "image"
+  fileController.uploadImage
+);
 
 // Route pour créer un fichier de page
 router.post('/createFile',verifyToken,fileController.createFile);

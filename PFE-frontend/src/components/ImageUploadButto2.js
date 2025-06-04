@@ -3,7 +3,8 @@ import { IconButton, Tooltip } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import { uploadImage } from '../services/api';
 
-const ImageUploadButton = ({ pageName, onUploadComplete }) => {
+const ImageUploadButton = ({ projectName, pageName, onUploadComplete }) => {
+
   const fileInputRef = useRef(null);
 
   const handleIconClick = () => {
@@ -14,37 +15,25 @@ const ImageUploadButton = ({ pageName, onUploadComplete }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    console.log('Uploading image for page/project:', pageName);
-
+    if (!projectName || !pageName) {
+      console.error('Missing projectName or pageName.');
+      return;
+    }
+      console.log("🔍 Rendered with projectName:", projectName);
+  console.log("🔍 Rendered with pageName:", pageName);
     try {
       const formData = new FormData();
-      formData.append('image', file);
-
-      // Get userId from localStorage or any auth context
-      const userId = localStorage.getItem('userId'); 
-      if (!userId) {
-        console.error('No userId found, cannot upload image.');
-        return;
-      }
-
-      formData.append('userId', userId);
-
-      // Use pageName as projectName for backend
-      if (pageName) {
-        formData.append('projectName', pageName);
-      } else {
-        console.error('No projectName (pageName) provided.');
-        return;
-      }
+      formData.append('image', file); // field name must match multer setup
+      formData.append('projectName', projectName);
+      formData.append('pageName', pageName);
 
       const result = await uploadImage(formData);
-      console.log('Upload result:', result);
+      console.log('✅ Upload result:', result);
 
-      if (onUploadComplete) {
-        onUploadComplete(result.path);
-      }
+      if (onUploadComplete) onUploadComplete(result.path);
+
     } catch (err) {
-      console.error('Upload failed', err);
+      console.error('❌ Upload failed:', err);
     }
   };
 

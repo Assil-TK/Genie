@@ -18,18 +18,17 @@ export const generatePageFromPrompt = async (prompt) => {
   }
 };
 
-
 export const uploadImage = async (formData) => {
   try {
-    const token = localStorage.getItem('token'); // or your auth method
+    const token = localStorage.getItem('token'); // JWT
 
     const response = await axios.post(
-      `${API_URL}/api/upload-image`, // replace with your correct route
+      `${API_URL}/api/upload-image`,
       formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`, // If your backend requires auth
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -41,7 +40,6 @@ export const uploadImage = async (formData) => {
     throw error;
   }
 };
-
 
 
 

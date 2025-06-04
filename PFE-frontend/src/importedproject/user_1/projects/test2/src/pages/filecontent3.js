@@ -1,14 +1,19 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 
-const HelloPage = () => {
+const EventPage = () => {
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh" sx={{ backgroundColor: '#f0f8ff' }}>
-      <Typography variant="h4" color="#333">
-        Hello, World!
-      </Typography>
-    </Box>
+    <Card sx={{ maxWidth: 300, margin: '0 auto', marginTop: 5 }}>
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          Vendredi 13 juin
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Soutenance de PFE
+        </Typography>
+      </CardContent>
+    </Card>
   );
 };
 
-export default HelloPage;
+export default EventPage;
