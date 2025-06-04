@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, CircularProgress, Snackbar, Alert, Box } from "@mui/material";
 import { approveClient } from "../services/api";
 
 const API_URL = "http://localhost:5000"; 
@@ -43,8 +43,9 @@ const PendingAdmins = () => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 3, marginTop: 10, marginLeft: 8 }}>
-      <Typography variant="h5" gutterBottom color="#F39325">
+    <Box sx={{backgroundColor: "#CDD5E0", minHeight: "100vh"}}>
+    <Paper sx={{ padding: 3, marginTop: 10, marginLeft: 8, marginRight:2 }}>
+      <Typography variant="h4" color="#1B374C" align='center' sx={{ fontFamily: "Poppins", mb: 3 }}>
         Comptes clients en attente d'approbation
       </Typography>
 
@@ -57,10 +58,10 @@ const PendingAdmins = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nom d'utilisateur</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Date d'inscription</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}>Nom d'utilisateur</TableCell>
+                <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}>Email</TableCell>
+                <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}>Date d'inscription</TableCell>
+                <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -95,6 +96,7 @@ const PendingAdmins = () => {
         </Alert>
       </Snackbar>
     </Paper>
+    </Box>
   );
 };
 

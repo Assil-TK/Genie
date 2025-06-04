@@ -99,10 +99,10 @@ const AdminList = () => {
   
 
   return (
-    <Box sx={{p:10}}>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins" }}>Gestion des Clients</Typography>
-        <Box>
+    <Box sx={{ p: 10, backgroundColor: "#CDD5E0" }}>
+      {/* //<Box display="flex" justifyContent="space-between" mb={2}> */}
+        <Typography  variant="h3" color="#1B374C" align='center' sx={{ fontFamily: "Poppins", mb: 3 }}>Gestion des Clients</Typography>
+        <Box sx={{mb:2}}>
           <Button variant="contained" sx={{
                         backgroundColor: "#F5F5F5",
                         color: "#000",
@@ -116,7 +116,7 @@ const AdminList = () => {
                         },
                         mr:2
                     }}  onClick={handleOpenCreate}>
-            Nouveau Client
+            Ajouter un client
           </Button>
           <Button variant="contained" sx={{
                         backgroundColor: "#F5F5F5",
@@ -125,22 +125,22 @@ const AdminList = () => {
                         height: "40px",
                         borderRadius: 5,
                         "&:active": {
-                            backgroundColor: "#1B374C",
+                            backgroundColor: "#F39325",
                             color: "#FFF",
                             borderColor: "#1B374C",
                         },
                     }} onClick={() => navigate("/admins/pending")}>
-            En attente
+            Clients en attente
           </Button>
         </Box>
-      </Box>
+      {/* //</Box> */}
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Client</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell align="center">Actions</TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Client</strong></TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Email</strong></TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }} align="center"><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -159,7 +159,7 @@ const AdminList = () => {
       </TableContainer>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>{editAdmin ? "Modifier Client" : "Nouveau Client"}</DialogTitle>
+        <DialogTitle sx={{fontFamily: "Poppins", color:"#F5B17B", textAlign:"center"}}>{editAdmin ? "Modifier les données d'un client" : "Ajouter un nouveau client"}</DialogTitle>
         <DialogContent>
           <TextField
             label="Username" fullWidth margin="dense"
@@ -180,8 +180,8 @@ const AdminList = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Annuler</Button>
-          <Button onClick={handleSubmit}>{editAdmin ? "Enregistrer" : "Créer"}</Button>
+          <Button sx={{color:"#E14D2A"}} onClick={() => setDialogOpen(false)}>Annuler</Button>
+          <Button sx={{color:"#4E709D"}} onClick={handleSubmit}>{editAdmin ? "Enregistrer" : "Créer"}</Button>
         </DialogActions>
       </Dialog>
       <Snackbar

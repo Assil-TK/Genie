@@ -1,12 +1,13 @@
 import React from "react";
 import HistoryViewer from "../components/HistoryViewer";
+import { Box, Typography } from "@mui/material";
 
 const HistoryPage = () => {
   return (
-    <div style={{ margin: "25px", padding: "30px" }}>
-      <h1 style={{color: "#F39325"}}>Historique de toutes les modifications</h1>
+    <Box sx={{ p: 10, backgroundColor: "#CDD5E0" }}>
+       <Typography variant="h3" color="#1B374C" align='center' sx={{ fontFamily: "Poppins", mb: 3 }}>Historique de toutes les opérations</Typography>
       <HistoryViewer />
-    </div>
+    </Box>
   );
 };
 
