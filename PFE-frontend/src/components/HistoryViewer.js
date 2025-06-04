@@ -55,14 +55,14 @@ const HistoryViewer = () => {
       </FormControl>
       <FormControl sx={{ mr: 2, minWidth: 150 }}>
         <TextField
-          label="Utilisateur"
+          label="Client"
           value={userFilter}
           onChange={(e) => setUserFilter(e.target.value)}
         />
       </FormControl>
       <FormControl sx={{ mr: 2, minWidth: 150 }}>
         <TextField
-          label="Nom de la page"
+          label="Nom de l'interface"
           value={pageFilter}
           onChange={(e) => setPageFilter(e.target.value)}
         />
@@ -72,11 +72,10 @@ const HistoryViewer = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Opération</TableCell>
-              <TableCell>Utilisateur</TableCell>
-              <TableCell>Page</TableCell>
-              <TableCell>Date</TableCell>
-              {/* <TableCell align="center">Actions</TableCell> */}
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Opération</strong></TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Client</strong></TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Interface</strong></TableCell>
+              <TableCell sx={{ fontFamily: "Poppins", color:"#F5B17B" }}><strong>Date</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
