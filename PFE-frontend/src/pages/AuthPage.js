@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  TextField,
-  Button,
-  Box,
-  Card,
-  CardContent,
-  Typography
-} from "@mui/material";
+import {TextField,Button,Box,Card,CardContent,Typography, Snackbar, Alert} from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser, loginUser } from "../services/api";
 import LoginButton from "../components/LoginButton";
@@ -20,6 +13,11 @@ const AuthPage = ({ onLogin = () => {} }) => {
     email: "",
     password: "",
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -30,12 +28,20 @@ const AuthPage = ({ onLogin = () => {} }) => {
     try {
       if (isRegister) {
         if (isAdmin) {
-          alert("L'admin ne peut pas s'inscrire.");
+        setSnackbar({
+            open: true,
+            message: "L'admin ne peut pas s'inscrire.",
+            severity: "warning",
+          });          
           return;
         }
 
         await registerUser({ ...formData, role: "client" });
-        alert("Inscription réussie. Veuillez vous connecter.");
+        setSnackbar({
+          open: true,
+          message: "Inscription réussie. Veuillez vous connecter.",
+          severity: "success",
+        });        
         setIsRegister(false);
         setFormData({ username: "", email: "", password: "" });
       } else {
@@ -55,7 +61,11 @@ const AuthPage = ({ onLogin = () => {} }) => {
         error.response?.data?.message ||
         error.response?.data?.error ||
         "Une erreur est survenue.";
-      alert("Erreur : " + errorMessage);
+        setSnackbar({
+        open: true,
+        message: "Erreur : " + errorMessage,
+        severity: "error",
+      });
     }
   };
 
@@ -195,6 +205,20 @@ const AuthPage = ({ onLogin = () => {} }) => {
           </Box>
         </CardContent>
       </Card>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          sx={{ width: '100%', fontFamily: 'Poppins' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

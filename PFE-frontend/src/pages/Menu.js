@@ -138,11 +138,6 @@ const MenuPage = () => {
                       border: '2px solid #cbd5e0',
                       transition: 'transform 0.3s ease, border-color 0.3s ease',
                       boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
-                      '&:hover': {
-                        transform: 'scale(1.03)',
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                        boxShadow: 'none',
-                      },
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -154,9 +149,31 @@ const MenuPage = () => {
                       animationFillMode: 'forwards',
                       animationTimingFunction: 'ease',
                       animationDelay: `${delay}ms`,
+                      '&:hover': {
+                        transform: 'scale(0.95)', // box shrinks slightly
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        boxShadow: 'none',
+                        '& .iconZoom': {
+                          transform: 'scale(1.4)', // icon grows
+                        },
+                      },
                     }}
                   >
-                    {item.icon}
+                    <Box
+                      className="iconZoom"
+                      sx={{
+                        transition: 'transform 0.3s ease',
+                        display: 'flex',
+                        
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem', // Adjust as needed
+                      }}
+                    >
+                      {React.cloneElement(item.icon, { fontSize: 'inherit' })}
+                    </Box>
+
+
                     <Typography
                       variant="body1"
                       sx={{
@@ -169,6 +186,8 @@ const MenuPage = () => {
                       {item.text}
                     </Typography>
                   </Paper>
+
+
                 </Fade>
               </Grid>
             );

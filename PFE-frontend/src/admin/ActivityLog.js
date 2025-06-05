@@ -23,8 +23,8 @@ const ActivityLog = () => {
     }, []);
 
     return (
-        <Box sx={{ p: 10 }}>
-            <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins" }}> Mon journal d’activité </Typography>
+        <Box sx={{ p: 10, backgroundColor: "#EFEEEA",  minHeight: "100vh" }}>
+            <Typography variant="h4" align='center' sx={{color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}> Mon journal d’activité </Typography>
             {loading ? (
                 <Box display="flex" justifyContent="center" mt={4}>
                     <CircularProgress />
@@ -34,9 +34,9 @@ const ActivityLog = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Type</TableCell>
-                                <TableCell>Page</TableCell>
-                                <TableCell>Date</TableCell>
+                                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Type</strong></TableCell>
+                                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Page</strong></TableCell>
+                                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Date</strong></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

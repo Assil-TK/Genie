@@ -91,7 +91,8 @@ Style visuel : ${formData.style}, framework ou librairie : ${formData.framework}
                                     name="layout"
                                     value={layout}
                                     onChange={handleChange}
-                                    checked={formData.layout === layout || (layout === 'Autre' && isAutre())}
+                                    checked={formData.layout === layout}
+
                                     style={{ marginRight: '8px' }}
                                     required
                                 />
@@ -134,32 +135,82 @@ Style visuel : ${formData.style}, framework ou librairie : ${formData.framework}
 
             case 'theme':
                 return (
-                    <div>
-                        <strong>Thème de couleurs :</strong>
-                        {['Clair', 'Sombre', 'Personnalisé'].map((theme) => (
-                            <label key={theme} style={radioStyle}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {/* Sélection du thème */}
+                        <div>
+                            <strong>Thème de couleurs :</strong>
+                            {['Clair', 'Sombre', 'Personnalisé'].map((theme) => (
+                                <label key={theme} style={radioStyle}>
+                                    <input
+                                        type="radio"
+                                        name="theme"
+                                        value={theme}
+                                        onChange={(e) => {
+                                            handleChange(e);
+                                            if (e.target.value !== 'Personnalisé') {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    themeCustom: '',
+                                                }));
+                                            }
+                                        }}
+                                        checked={formData.theme === theme}
+                                        required
+                                    />
+                                    {theme}
+                                </label>
+                            ))}
+                            {/* Champ caché */}
+                            {formData.theme === 'Personnalisé' && (
                                 <input
-                                    type="radio"
-                                    name="theme"
-                                    value={theme}
-                                    onChange={handleChange}
-                                    checked={formData.theme === theme}
-                                    required
+                                    type="hidden"
+                                    name="themeCustom"
+                                    value={formData.themeCustom}
+                                    readOnly
                                 />
-                                {theme}
-                            </label>
-                        ))}
+                            )}
+                        </div>
+
+                        {/* Palette affichée horizontalement si Personnalisé */}
                         {formData.theme === 'Personnalisé' && (
-                            <input
-                                name="themeCustom"
-                                placeholder="Ex: Bleu pastel, rouge foncé..."
-                                onChange={handleChange}
-                                value={formData.themeCustom}
-                                style={inputStyle}
-                            />
+                            <div style={{ marginTop: '10px', textAlign: 'left' }}>
+                                <strong>Choisir votre palette :</strong>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', marginTop: '10px' }}>
+                                    {Array.from({ length: 5 }).map((_, index) => {
+                                        const colors = formData.themeCustom ? formData.themeCustom.split(',') : [];
+                                        const color = colors[index] || '#ffffff';
+
+                                        return (
+                                            <input
+                                                key={index}
+                                                type="color"
+                                                value={color}
+                                                onChange={(e) => {
+                                                    const updatedColors = [...colors];
+                                                    updatedColors[index] = e.target.value;
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        themeCustom: updatedColors.join(','),
+                                                    }));
+                                                }}
+                                                style={{
+                                                    width: '30px',
+                                                    height: '30px',
+                                                    border: color === '#ffffff' ? '1px dashed #aaa' : 'none',
+                                                    background: 'none',
+                                                    cursor: 'pointer',
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         )}
                     </div>
                 );
+
+
+
             case 'composants':
                 return (
                     <div>

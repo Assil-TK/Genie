@@ -45,17 +45,17 @@ const ProjectUpload = () => {
       setUploading(false);
     }
   };
-
+//   ECF2F9  gris:rgb(245, 244, 243)
   return (
-    <Box sx={{ p:10, display: 'flex', justifyContent: 'center' }}>
-      <Paper elevation={4} sx={{ p: 5, borderRadius: 4, width: '100%', maxWidth: 600 }}>
-        <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins", mb: 3 }}>
-          Importer un projet
-        </Typography>
-
+    <Box sx={{ p: 10, backgroundColor:"#EFEEEA", minHeight: "100vh" }}> 
+      <Typography variant="h4" align='center' sx={{color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}>
+          Importer un projet local
+      </Typography>
+      <Paper elevation={4} align="center" sx={{ p: 5, borderRadius: 4, width: '100%', maxWidth: 600, mx: "auto", textAlign: "center"}}>
+        
         <Stack spacing={2}>
-          <Typography variant="body1">
-            Uploadez un projet React compressé au format <strong>.zip</strong>.
+          <Typography variant="body1" sx={{fontFamily: "Poppins", color:"#89A4C7"}} >
+            Importez un projet React compressé au format <strong>.zip</strong>.
           </Typography>
 
           <input
@@ -70,7 +70,8 @@ const ProjectUpload = () => {
             <Button
               variant="outlined"
               component="span"
-              fullWidth
+              //fullWidth
+              sx={{color:"#1B374C"}}
               startIcon={<CloudUploadIcon />}
             >
               Choisir un fichier ZIP
@@ -86,13 +87,13 @@ const ProjectUpload = () => {
           {uploading && <LinearProgress />}
 
           <Button
-            variant="contained"
-            color="primary"
+            //variant="contained"
+            sx={{backgroundColor:"#89A4C7", color: "black"}}
             onClick={handleUpload}
             disabled={!file || uploading}
-            fullWidth
+            //fullWidth
           >
-            Uploader le projet
+            Importer le projet
           </Button>
 
           {message && <Alert severity="success">{message}</Alert>}

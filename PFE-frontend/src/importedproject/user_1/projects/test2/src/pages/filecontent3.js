@@ -1,33 +1,23 @@
 import React from 'react';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
+import { Card, CardContent, Typography } from '@mui/material';
+import screenshot from '../assets/Screenshot 2025-06-04 141620.png';
 
-const HelloWorld = () => {
+const EventPage = () => {
   return (
-    <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ height: '100vh' }}>
-      <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
-        <Paper elevation={4} sx={{ padding: 2, textAlign: 'center' }}>
-          <Box mb={2}>
-            <img
-              src={require('../assets/Screenshot 2025-06-03 223631.png')}
-              alt="Screenshot"
-              width={300}
-              height={300}
-              style={{ maxWidth: '100%', height: 'auto' }}
-            />
-          </Box>
-          <Typography variant="h4" gutterBottom>
-            Hello World!
+    <div>
+      <img src={screenshot} alt="Screenshot" style={{ width: '100%', height: 'auto' }} />
+      <Card sx={{ maxWidth: 300, margin: '0 auto', marginTop: 5 }}>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            Vendredi 13 juin
           </Typography>
-          <Typography variant="body1">
-            This is a modern UI page with a screenshot image.
+          <Typography variant="body2" color="text.secondary">
+            Soutenance de PFE
           </Typography>
-        </Paper>
-      </Grid>
-    </Grid>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
-export default HelloWorld;
+export default EventPage;

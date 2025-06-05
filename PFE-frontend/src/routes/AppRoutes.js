@@ -143,6 +143,11 @@ const AppRoutes = ({ toggleSidebar, sidebarOpen }) => {
             <Route path="/deploygit" element={<DeployGit/>} />
             <Route path="/filecontent2" element={<FileContent2 />} />
  
+
+
+
+
+
 </Routes>
         </ProjectProvider>
       </Box>

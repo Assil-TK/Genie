@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Button, Typography, CircularProgress, Box, Chip, Link
+  Paper, Button, Typography, CircularProgress, Box, Chip, Link, Snackbar, Alert
 } from "@mui/material";
 import { getProjectsWithDeploymentInfo, deployProject } from "../../services/api";
 import { format } from "date-fns";
@@ -10,6 +10,7 @@ const ProjectDeploy = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deploying, setDeploying] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" })
 
   const fetchProjects = async () => {
   setLoading(true);
@@ -31,10 +32,16 @@ useEffect(() => {
     setDeploying((prev) => ({ ...prev, [projectName]: true }));
     try {
       await deployProject(userId, projectName);
-      alert("Déploiement effectué !");
+      setSnackbar({ open: true, message: "Déploiement effectué !", severity: "success" });
+      //alert("Déploiement effectué !");
       fetchProjects();
     } catch (error) {
-      alert("Erreur de déploiement : " + (error.message || "inconnue"));
+      setSnackbar({
+        open: true,
+        message: "Erreur de déploiement : " + (error.message || "inconnue"),
+        severity: "error"
+      });
+      //alert("Erreur de déploiement : " + (error.message || "inconnue"));
     } finally {
       setDeploying((prev) => ({ ...prev, [projectName]: false }));
     }
@@ -54,8 +61,8 @@ useEffect(() => {
   };
 
   return (
-    <Box sx={{ p: 10 }}>
-      <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins", mb: 3 }}>
+    <Box sx={{ p: 10, backgroundColor:"#EFEEEA", minHeight: "100vh" }}>
+      <Typography variant="h4" align="center" sx={{ color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}>
         Déployer un projet
       </Typography>
 
@@ -66,11 +73,11 @@ useEffect(() => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nom du projet</TableCell>
-                <TableCell>Dernière modification</TableCell>
-                <TableCell>Statut du déploiement</TableCell>
-                <TableCell>URL déployée</TableCell>
-                <TableCell align="right">Action</TableCell>
+                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Nom du projet</strong></TableCell>
+                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Dernière modification</strong></TableCell>
+                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>Statut du déploiement</strong></TableCell>
+                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}}><strong>URL déployée</strong></TableCell>
+                <TableCell sx={{fontFamily:"Poppins", color:"#4E709D"}} align="right"><strong>Action</strong></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,9 +106,10 @@ useEffect(() => {
                   </TableCell>
                   <TableCell align="right">
                     <Button
-                      variant="contained"
-                      color="success"
+                      //variant="contained"
+                      //color="success"
                       disabled={deploying[project.name]}
+                      sx={{backgroundColor:"#89A4C7", color:"black", fontFamily:"Poppins"}}
                       onClick={() => handleDeploy(project.userId, project.name)}
                     >
                       {deploying[project.name] ? "Déploiement..." : "Déployer"}
@@ -115,6 +123,22 @@ useEffect(() => {
       ) : (
         <Typography>Aucun projet trouvé.</Typography>
       )}
+       {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          sx={{ width: "100%", fontFamily: "Poppins" }}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
     </Box>
   );
 };

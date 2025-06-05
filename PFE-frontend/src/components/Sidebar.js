@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Drawer,
@@ -15,8 +15,6 @@ import {
   Add as AddIcon,
   WorkHistory as WorkHistoryIcon,
   FolderDelete as FolderDeleteIcon,
-  ManageHistory as ManageHistoryIcon,
-  Group as GroupIcon,
   CloudUpload as CloudUploadIcon,
   FileUpload as FileUploadIcon,
   FileDownload as FileDownloadIcon,
@@ -28,7 +26,6 @@ import { removeFromFrontend } from "../services/api";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
 
   const pathsThatNeedCleanup = [
     "/admin/createFile",
@@ -37,10 +34,6 @@ const Sidebar = () => {
     "/admin/upload",
     "/admin/deploy"
   ];
-
-  const handleToggle = () => {
-    setOpen(prev => !prev);
-  };
 
   const handleNavigation = async (path) => {
     if (pathsThatNeedCleanup.includes(path)) {
@@ -70,35 +63,33 @@ const Sidebar = () => {
     <Drawer
       variant="permanent"
       anchor="left"
-      onClick={handleToggle}
       sx={{
-        width: open ? 240 : 60,
+        width: 60,
+        
         flexShrink: 0,
         position: 'fixed',
         zIndex: 1200,
         height: "100vh",
         "& .MuiDrawer-paper": {
-          width: open ? 240 : 60,
-          transition: "width 0.3s ease",
+          width: 60,
           overflowX: "hidden",
+          backgroundColor: '#f7f7f7',
         },
       }}
     >
       <List sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginTop: '64px' }}>
         {menuItems.map((item, index) => (
-          <Tooltip title={!open ? item.text : ""} placement="right" key={index}>
+          <Tooltip title={item.text} placement="right" key={index}>
             <ListItem button onClick={() => handleNavigation(item.path)}>
               <ListItemIcon>{item.icon}</ListItemIcon>
-              {open && <ListItemText primary={item.text} />}
             </ListItem>
           </Tooltip>
         ))}
 
         <Box sx={{ marginTop: 'auto' }}>
-          <Tooltip title={!open ? "Paramètres" : ""} placement="right">
+          <Tooltip title="Paramètres" placement="right">
             <ListItem button onClick={() => handleNavigation("/Parametres")}>
               <ListItemIcon><SettingsIcon /></ListItemIcon>
-              {open && <ListItemText primary="Paramètres" />}
             </ListItem>
           </Tooltip>
         </Box>
