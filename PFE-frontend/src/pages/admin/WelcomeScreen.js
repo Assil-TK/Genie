@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react'; // 🆕 Added useState here
 import { Box, Fade, Button, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import gifAnimation from '../../assets/yesfull222.gif';
-
+import gifAnimation from '../../assets/orangee.gif';
+import staticImage from '../../assets/orangee.png'; // 🆕 Added PNG fallback
 
 // Background animation
 const gradientMove = keyframes`
@@ -39,12 +39,18 @@ const slideUpFadeIn = keyframes`
 
 const WelcomeScreen = () => {
   const navigate = useNavigate();
+  const [showGif, setShowGif] = useState(true); // 🆕 Added showGif state
 
   useEffect(() => {
     const originalBackground = document.body.style.backgroundColor;
     document.body.style.backgroundColor = '#f0f9ff';
+
+    // 🆕 Set timeout to switch image
+    const timer = setTimeout(() => setShowGif(false), 5000);
+
     return () => {
       document.body.style.backgroundColor = originalBackground;
+      clearTimeout(timer); // 🆕 Cleanup
     };
   }, []);
 
@@ -70,22 +76,7 @@ const WelcomeScreen = () => {
           overflow: 'hidden',
         }}
       >
-        {/* Watermark background */}
-        <Box
-          component="img"
-          src="public/images/webdevelopment-.png"
-          alt="background watermark"
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: 0.025,
-            zIndex: -1,
-          }}
-        />
+        
 
         {/* Animated blob SVG */}
         <Box
@@ -122,16 +113,17 @@ const WelcomeScreen = () => {
             zIndex: 2,
             maxWidth: '50%',
             textAlign: 'left',
-            ml: { xs: 2, md: 8 },
+            ml: { xs: 2, md: 10 },
           }}
         >
           <Typography
-            variant="h3"
+            variant="h2"
             fontWeight={700}
             sx={{
               mb: 2,
               animation: `${slideFadeIn} 0.8s ease forwards`,
               animationDelay: '0.2s',
+              textShadow: '2px 2px 6px rgba(0, 0, 0, 0.5)',
               opacity: 0,
             }}
           >
@@ -145,45 +137,47 @@ const WelcomeScreen = () => {
               mb: 3,
               animation: `${slideFadeIn} 1.2s ease forwards`,
               animationDelay: '0.8s',
+              textShadow: '2px 2px 6px rgba(0, 0, 0, 0.5)',
               opacity: 0,
-              color: '#ffcb74',
+              color: 'rgb(238, 210, 89)',
             }}
           >
             GenieAI
           </Typography>
 
           <Typography
-  variant="h6"
-  sx={{
-    mb: 1,
-    fontFamily: 'Raleway, sans-serif',
-    fontWeight: 500,
-    letterSpacing: '0.5px',
-    fontSize: '1.15rem',
-    animation: `${slideUpFadeIn} 0.8s ease forwards`,
-    animationDelay: '2s',
-    opacity: 0,
-  }}
->
-  Une nouvelle façon de gérer vos projets Web avec l'IA
-</Typography>
+            variant="h6"
+            sx={{
+              mb: 1,
+              fontFamily: 'Raleway, sans-serif',
+              fontWeight: 500,
+              letterSpacing: '0.5px',
+              fontSize: '1.15rem',
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+              animation: `${slideUpFadeIn} 0.8s ease forwards`,
+              animationDelay: '2s',
+              opacity: 0,
+            }}
+          >
+            Une nouvelle façon de gérer vos projets Web avec l'IA
+          </Typography>
 
-<Typography
-  variant="h6"
-  sx={{
-    mb: 5,
-    fontFamily: 'Raleway, sans-serif',
-    fontWeight: 500,
-    letterSpacing: '0.5px',
-    fontSize: '1.15rem',
-    animation: `${slideUpFadeIn} 0.8s ease forwards`,
-    animationDelay: '2.4s',
-    opacity: 0,
-  }}
->
-  Ajoutez, Modifiez, Déployez. Plus vite que jamais.
-</Typography>
-
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 5,
+              fontFamily: 'Raleway, sans-serif',
+              fontWeight: 500,
+              letterSpacing: '0.5px',
+              fontSize: '1.15rem',
+              animation: `${slideUpFadeIn} 0.8s ease forwards`,
+              animationDelay: '2.4s',
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+              opacity: 0,
+            }}
+          >
+            Ajoutez, Modifiez, Déployez. Plus vite que jamais.
+          </Typography>
 
           <Box
             sx={{
@@ -199,43 +193,49 @@ const WelcomeScreen = () => {
                 py: 1.8,
                 fontSize: '1.1rem',
                 borderRadius: '30px',
-                backgroundColor: '#ff8c42',
+                fontWeight: 'bold',
+                backgroundColor: ' #00d544',
                 color: '#fff',
                 textTransform: 'none',
-                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  backgroundColor: '#ffae64',
+                  backgroundColor: 'rgb(107, 220, 143)',
                   transform: 'scale(1.05)',
                 },
               }}
             >
-              Commencer
+              COMMENCER
             </Button>
           </Box>
         </Box>
 
-        {/* RIGHT: Empty space */}
+        {/* RIGHT: Image */}
         <Box
-  sx={{
-    width: '45%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 2,
-  }}
->
-  <img
-    src={gifAnimation}
-    alt="Animated Visual"
-    style={{ width: '100%', maxWidth: '560px', height: 'auto', marginTop:'40px',filter: 'drop-shadow(0 0 12px rgba(223, 215, 211, 0.4))', }}
-  />
-</Box>
-
+          sx={{
+            width: '45%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 2,
+          }}
+        >
+          <img
+            src={showGif ? gifAnimation : staticImage}
+            alt="Visual"
+            style={{
+              width: '110%',
+              maxWidth: '560px',
+              height: 'auto',
+              marginTop: '40px',
+              filter: 'drop-shadow(0 0 12px rgba(42, 46, 68, 0.52))',
+              transition: 'opacity 0.5s ease-in-out',
+            }}
+          />
+        </Box>
       </Box>
     </Fade>
   );
 };
 
 export default WelcomeScreen;
-

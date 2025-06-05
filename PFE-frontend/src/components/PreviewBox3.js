@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import lampGif from '../assets/lamp (3).gif'; // Make sure the path is correct
+import lampGif from '../assets/stars.gif'; // Make sure the path is correct
 
 const PreviewBox = () => {
   const [showIframe, setShowIframe] = useState(false);

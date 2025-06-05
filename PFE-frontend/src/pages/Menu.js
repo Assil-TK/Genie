@@ -37,7 +37,7 @@ const sections = [
   { text: "Modification", icon: <Edit />, path: "/admin/editfile", color: "#dde6f2" },
   { text: "Télécharger", icon: <FileDownload />, path: "/admin/download", color: "#dde6f2" },
   { text: "Deployer", icon: <CloudUpload />, path: "/admin/deploy", color: "#dde6f2" },
-  { text: "Supression", icon: <FolderDelete />, path: "/admin/delete", color: "#dde6f2" },
+  
   { text: "Avis", icon: <Comment />, path: "/admin/avis", color: "#dde6f2" },
   { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history", color: "#dde6f2" },
 ];
@@ -110,7 +110,7 @@ const MenuPage = () => {
             fontWeight: 'bold',
             mb: 2,
             fontFamily: 'Fira Sans, sans-serif',
-            color: 'orange',
+            color:'#F39325',
             animation: `${fadeInUp} 2s ease-out`,
             textAlign: 'center',
             marginBottom: '60px',
@@ -134,7 +134,9 @@ const MenuPage = () => {
                       height: '180px',
                       width: '250px',
                       cursor: 'pointer',
-                      backgroundColor: item.color,
+                       borderRadius: '20px',
+                      background: 'radial-gradient(circle at center, #ffffff,rgb(199, 210, 227))',
+
                       border: '2px solid #cbd5e0',
                       transition: 'transform 0.3s ease, border-color 0.3s ease',
                       boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
@@ -164,7 +166,7 @@ const MenuPage = () => {
                       sx={{
                         transition: 'transform 0.3s ease',
                         display: 'flex',
-                        
+                        color: 'rgb(63, 126, 220) ',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '2rem', // Adjust as needed
@@ -178,7 +180,7 @@ const MenuPage = () => {
                       variant="body1"
                       sx={{
                         fontSize: '1.25rem',
-                        color: '#1B374C',
+                        color: '#1B374C ',
                         textAlign: 'center',
                         marginTop: 1,
                       }}

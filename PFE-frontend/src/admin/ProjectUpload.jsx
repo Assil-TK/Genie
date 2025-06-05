@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import animation from '../assets/Animation1.gif';
+
 import {
   Button,
   Box,
@@ -45,62 +47,89 @@ const ProjectUpload = () => {
       setUploading(false);
     }
   };
-//   ECF2F9  gris:rgb(245, 244, 243)
+
   return (
-    <Box sx={{ p: 10, backgroundColor:"#EFEEEA", minHeight: "100vh" }}> 
-      <Typography variant="h4" align='center' sx={{color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}>
-          Importer un projet local
-      </Typography>
-      <Paper elevation={4} align="center" sx={{ p: 5, borderRadius: 4, width: '100%', maxWidth: 600, mx: "auto", textAlign: "center"}}>
-        
-        <Stack spacing={2}>
-          <Typography variant="body1" sx={{fontFamily: "Poppins", color:"#89A4C7"}} >
-            Importez un projet React compressé au format <strong>.zip</strong>.
+    <>
+      {/* Background GIF */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: `url(${animation})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          zIndex: -1,
+        }}
+      />
+
+      {/* Foreground content */}
+      <Box sx={{ minHeight: "100vh", display: 'flex', justifyContent: 'center', alignItems: 'center', px: 2 }}>
+        <Paper
+          elevation={4}
+          align="center"
+          sx={{
+            p: 5,
+            borderRadius: 4,
+            width: '100%',
+            maxWidth: 600,
+            textAlign: "center",
+            backgroundColor: 'rgba(255, 255, 255, 0.85)', // Optional: to make text readable
+          }}
+        >
+          <Typography variant="h4" align='center' sx={{ color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}>
+            Importer un projet local
           </Typography>
 
-          <input
-            type="file"
-            accept=".zip"
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            id="upload-zip"
-          />
-
-          <label htmlFor="upload-zip">
-            <Button
-              variant="outlined"
-              component="span"
-              //fullWidth
-              sx={{color:"#1B374C"}}
-              startIcon={<CloudUploadIcon />}
-            >
-              Choisir un fichier ZIP
-            </Button>
-          </label>
-
-          {file && (
-            <Typography variant="body2" color="text.secondary">
-              Fichier sélectionné : <strong>{file.name}</strong>
+          <Stack spacing={2}>
+            <Typography variant="body1" sx={{ fontFamily: "Poppins", color: "#89A4C7" }}>
+              Importez un projet React compressé au format <strong>.zip</strong>.
             </Typography>
-          )}
 
-          {uploading && <LinearProgress />}
+            <input
+              type="file"
+              accept=".zip"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="upload-zip"
+            />
 
-          <Button
-            //variant="contained"
-            sx={{backgroundColor:"#89A4C7", color: "black"}}
-            onClick={handleUpload}
-            disabled={!file || uploading}
-            //fullWidth
-          >
-            Importer le projet
-          </Button>
+            <label htmlFor="upload-zip">
+              <Button
+                variant="outlined"
+                component="span"
+                sx={{ color: "#1B374C" }}
+                startIcon={<CloudUploadIcon />}
+              >
+                Choisir un fichier ZIP
+              </Button>
+            </label>
 
-          {message && <Alert severity="success">{message}</Alert>}
-          {error && <Alert severity="error">{error}</Alert>}
-        </Stack>
-      </Paper>
-    </Box>
+            {file && (
+              <Typography variant="body2" color="text.secondary">
+                Fichier sélectionné : <strong>{file.name}</strong>
+              </Typography>
+            )}
+
+            {uploading && <LinearProgress />}
+
+            <Button
+              sx={{ backgroundColor: "#89A4C7", color: "black" }}
+              onClick={handleUpload}
+              disabled={!file || uploading}
+            >
+              Importer le projet
+            </Button>
+
+            {message && <Alert severity="success">{message}</Alert>}
+            {error && <Alert severity="error">{error}</Alert>}
+          </Stack>
+        </Paper>
+      </Box>
+    </>
   );
 };
 

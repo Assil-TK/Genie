@@ -4,6 +4,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import React from "react";
 import { logOut } from "../services/api";
+import menuImage from '../assets/whitee.png'; // Replace with your actual image file name
+
 
 const Header = ({ toggleSidebar }) => {
     const handleLogout = () => {
@@ -18,10 +20,11 @@ const Header = ({ toggleSidebar }) => {
         <AppBar position="fixed" sx={{ backgroundColor: "#1B374C", width: "100%", zIndex: 1201 }}>
             <Toolbar>
                 <IconButton edge="start" color="inherit" onClick={toggleSidebar}>
-                    <MenuIcon />
+                    <img src={menuImage} alt="menu" style={{ width: 40, height: 38 }} />
+
                 </IconButton>
 
-                <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: "Poppins" }}>
+                <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: "Poppins", marginLeft: -1 }}>
                     GenieAI
                 </Typography>
 

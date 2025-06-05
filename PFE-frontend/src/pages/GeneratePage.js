@@ -155,6 +155,7 @@ const GeneratePage = () => {
             <div style={{
               position: 'absolute',
               bottom: '10px',
+              transform: 'scale(0.8)',
               right: '10px'
             }}>
               <ImageUploadButton

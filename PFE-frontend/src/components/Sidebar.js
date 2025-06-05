@@ -54,7 +54,7 @@ const Sidebar = () => {
     { text: "Modification", icon: <EditIcon />, path: "/admin/editfile" },
     { text: "Télécharger", icon: <FileDownloadIcon />, path: "/admin/download" },
     { text: "Deployer", icon: <CloudUploadIcon />, path: "/admin/deploy" },
-    { text: "Supression", icon: <FolderDeleteIcon />, path: "/admin/delete" },
+    
     { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
     { text: "Journal d'activité", icon: <WorkHistoryIcon />, path: "/admin/my-history" },
   ];
