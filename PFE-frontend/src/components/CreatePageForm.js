@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import loadingGif from '../assets/lamp (3).gif';
+
 import {
   generateCode,
   createFile,
@@ -193,7 +195,7 @@ export default function CreatePageForm() {
             },
           }}
         >
-          {loading ? 'Génération en cours...' : 'Générer avec IA'}
+          {loading ? 'En cours...' : 'Générer avec IA'}
         </Button>
       </Box>
 
@@ -251,17 +253,23 @@ export default function CreatePageForm() {
             </div>
           </div>
         </>
-      ) : (
-        <p
-          style={{
-            color: '#999',
-            fontStyle: 'italic',
-            marginTop: '4rem',
-          }}
-        >
-          Pas encore de preview disponible.
-        </p>
-      )}
+      ) : loading ? (
+  <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+    <img src={loadingGif} alt="Chargement..." style={{ width: '80px', height: '80px' }} />
+    <p style={{ color: '#999', fontStyle: 'italic' }}>Génération en cours...</p>
+  </div>
+) : (
+  <p
+    style={{
+      color: '#999',
+      fontStyle: 'italic',
+      marginTop: '4rem',
+    }}
+  >
+    Pas encore de preview disponible.
+  </p>
+)}
+
 
       <Box
         sx={{

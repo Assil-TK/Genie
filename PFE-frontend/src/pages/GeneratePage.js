@@ -6,7 +6,7 @@ import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
 import AIFormPopup from '../components/AIFormPopup';
 import ImageUploadButton from '../components/ImageUploadButton';
-
+import loadingGif from '../assets/lamp (3).gif';
 
 const GeneratePage = () => {
   const location = useLocation();
@@ -180,69 +180,76 @@ const GeneratePage = () => {
               marginBottom: '2rem',
             }}
           >
-            {loading ? 'Génération en cours...' : 'Générer avec IA'}
+            {loading ? 'En cours...' : 'Générer avec IA'}
           </button>
 
-          {generatedCode ? (
-            <>
-              <h4
-                style={{
-                  marginTop: '2rem',
-                  marginBottom: '2rem',
-                  marginLeft: '2rem',
-                  fontFamily: 'Fira Sans, sans-serif',
-                  color: 'grey',
-                  textAlign: 'left', // ← Aligne le texte à gauche
-                  width: '100%',     // ← S'assure qu'il occupe toute la largeur disponible
-                }}
-              >
-                Code généré :
-              </h4>
+          {loading ? (
+  <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+      <img src={loadingGif} alt="Chargement..." style={{ width: '80px', height: '80px' }} />
+      <p style={{ color: '#999', fontStyle: 'italic' }}>Génération en cours...</p>
+    </div>
+) : !generatedCode ? (
+  <p style={{ color: '#999', fontStyle: 'italic', marginTop: '4rem' }}>
+    Pas encore de preview disponible.
+  </p>
+) : (
+  <>
+    <h4
+      style={{
+        marginTop: '2rem',
+        marginBottom: '2rem',
+        marginLeft: '2rem',
+        fontFamily: 'Fira Sans, sans-serif',
+        color: 'grey',
+        textAlign: 'left',
+        width: '100%',
+      }}
+    >
+      Code généré :
+    </h4>
 
-              <div style={{
-                display: 'flex',
-                width: '100%',
-                gap: '2rem',
-                justifyContent: 'space-between',
-                alignItems: 'stretch',
-                flexWrap: 'nowrap',
-                marginRight: '-3rem'
-              }}>
-                <textarea
-                  value={generatedCode}
-                  onChange={(e) => {
-                    setGeneratedCode(e.target.value);
-                    updateFileContent2(e.target.value);
-                  }}
-                  rows={25}
-                  style={{
-                    resize: 'horizontal',
-                    minWidth: '300px',
-                    maxWidth: '70%',
-                    height: '600px',
-                    whiteSpace: 'pre',
-                    fontFamily: "'Fira Code', monospace",
-                    padding: '1rem',
-                    borderRadius: '12px',
-                    border: '1px solid #ccc',
-                    background: '#f9f9fb',
-                    color: '#333',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.5',
-                    overflow: 'auto',
-                  }}
-                />
-                <div style={{ flex: 1, minWidth: '0' }}>
-                  <PreviewBox />
-                </div>
-              </div>
+    <div
+      style={{
+        display: 'flex',
+        width: '100%',
+        gap: '2rem',
+        justifyContent: 'space-between',
+        alignItems: 'stretch',
+        flexWrap: 'nowrap',
+        marginRight: '-3rem',
+      }}
+    >
+      <textarea
+        value={generatedCode}
+        onChange={(e) => {
+          setGeneratedCode(e.target.value);
+          updateFileContent2(e.target.value);
+        }}
+        rows={25}
+        style={{
+          resize: 'horizontal',
+          minWidth: '300px',
+          maxWidth: '70%',
+          height: '600px',
+          whiteSpace: 'pre',
+          fontFamily: "'Fira Code', monospace",
+          padding: '1rem',
+          borderRadius: '12px',
+          border: '1px solid #ccc',
+          background: '#f9f9fb',
+          color: '#333',
+          fontSize: '0.95rem',
+          lineHeight: '1.5',
+          overflow: 'auto',
+        }}
+      />
+      <div style={{ flex: 1, minWidth: '0' }}>
+        <PreviewBox />
+      </div>
+    </div>
+  </>
+)}
 
-            </>
-          ) : (
-            <p style={{ color: '#999', fontStyle: 'italic', marginTop: '4rem' }}>
-              Pas encore de preview disponible.
-            </p>
-          )}
 
           {error && <p style={{ color: 'red', marginTop: '1rem' }}>{error}</p>}
 
