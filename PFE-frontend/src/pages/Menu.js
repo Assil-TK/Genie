@@ -1,45 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Paper, Fade, keyframes } from '@mui/material';
+import {
+  Box, Typography, Grid, Paper, Fade, keyframes
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import {
-  FileUpload, Add, Edit, FileDownload, CloudUpload, FolderDelete,
-  Comment, WorkHistory
+  FileUpload, Add, Edit, FileDownload, CloudUpload,
+  FolderDelete, Comment, WorkHistory
 } from '@mui/icons-material';
-import animation from '../assets/Animation1.gif'; // Import your gif
 
-// Heading animation: fadeInUp
+// Animations
 const fadeInUp = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 `;
 
-// Scale pop animation (only scale, no opacity)
-const popScale = keyframes`
-  0% {
-    transform: scale(0.85);
-  }
-  100% {
-    transform: scale(1);
-  }
+const scaleIn = keyframes`
+  0% { transform: scale(0.85); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+`;
+
+const gradientBG = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 `;
 
 const sections = [
-  { text: "Importer un projet", icon: <FileUpload />, path: "/admin/upload", color: "#dde6f2" },
-  { text: "Création", icon: <Add />, path: "/admin/createFile", color: "#dde6f2" },
-  { text: "Modification", icon: <Edit />, path: "/admin/editfile", color: "#dde6f2" },
-  { text: "Télécharger", icon: <FileDownload />, path: "/admin/download", color: "#dde6f2" },
-  { text: "Deployer", icon: <CloudUpload />, path: "/admin/deploy", color: "#dde6f2" },
-  
-  { text: "Avis", icon: <Comment />, path: "/admin/avis", color: "#dde6f2" },
-  { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history", color: "#dde6f2" },
+  { text: "Importer un projet", icon: <FileUpload />, path: "/admin/upload" },
+  { text: "Création", icon: <Add />, path: "/admin/createFile" },
+  { text: "Modification", icon: <Edit />, path: "/admin/editfile" },
+  { text: "Télécharger", icon: <FileDownload />, path: "/admin/download" },
+  { text: "Deployer", icon: <CloudUpload />, path: "/admin/deploy" },
+  { text: "Avis", icon: <Comment />, path: "/admin/avis" },
+  { text: "Journal d'activité", icon: <WorkHistory />, path: "/admin/my-history" },
 ];
 
 const fadeDuration = 600;
@@ -60,20 +55,12 @@ const MenuPage = () => {
         }
       });
     }, intervalDelay);
-
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        position: 'relative',
-        minHeight: '100vh',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Background image */}
+    <Box sx={{ display: 'flex', minHeight: '100vh', overflow: 'hidden' }}>
+      {/* Gradient Background */}
       <Box
         sx={{
           position: 'fixed',
@@ -81,45 +68,40 @@ const MenuPage = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: `url(${animation})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
+          background: 'linear-gradient(135deg,rgb(189, 200, 227),rgb(201, 209, 221),rgb(232, 220, 213))',
+          backgroundSize: '400% 400%',
+          animation: `${gradientBG} 15s ease infinite`,
           zIndex: -1,
-          opacity: 1,
         }}
       />
 
       <Header />
-      <Sidebar />
+      
 
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          padding: 4,
-          marginLeft: '100px',
-          marginTop: '60px',
-          marginRight: '70px',
-          transition: 'all 0.3s ease',
+          px: 4, py: 5,
+          ml: '100px', mt: '60px', mr: '70px',
         }}
       >
         <Typography
           variant="h3"
           sx={{
             fontWeight: 'bold',
-            mb: 2,
             fontFamily: 'Fira Sans, sans-serif',
-            color:'#F39325',
-            animation: `${fadeInUp} 2s ease-out`,
+            animation: `${fadeInUp} 1.2s ease-out`,
+            textShadow: '0px 1px 1px rgba(94, 92, 92, 0.3)',
+            color: '#1B374C',
             textAlign: 'center',
-            marginBottom: '60px',
+            mb: 6,
           }}
         >
           Bienvenue sur la plateforme
         </Typography>
 
-        <Grid container spacing={3} justifyContent="center">
+        <Grid container spacing={4} justifyContent="center">
           {visibleItems.map((item, index) => {
             const delay = index * intervalDelay;
 
@@ -128,35 +110,27 @@ const MenuPage = () => {
                 <Fade in timeout={fadeDuration} style={{ transitionDelay: `${delay}ms` }} unmountOnExit>
                   <Paper
                     onClick={() => navigate(item.path)}
-                    elevation={4}
+                    elevation={6}
                     sx={{
-                      padding: 3,
-                      height: '180px',
-                      width: '250px',
+                      height: 180,
+                      width: 250,
                       cursor: 'pointer',
-                       borderRadius: '20px',
-                      background: 'radial-gradient(circle at center, #ffffff,rgb(199, 210, 227))',
-
-                      border: '2px solid #cbd5e0',
-                      transition: 'transform 0.3s ease, border-color 0.3s ease',
-                      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
+                      borderRadius: '20px',
+                      background: 'linear-gradient(145deg, #e0e7ff, #f5f7ff)',
+                      border: '1px solid #dbeafe',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 1,
                       fontFamily: 'Poppins',
-                      animationName: `${popScale}`,
-                      animationDuration: `${fadeDuration}ms`,
-                      animationFillMode: 'forwards',
-                      animationTimingFunction: 'ease',
-                      animationDelay: `${delay}ms`,
+                      animation: `${scaleIn} ${fadeDuration}ms ease ${delay}ms forwards`,
                       '&:hover': {
-                        transform: 'scale(0.95)', // box shrinks slightly
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                        boxShadow: 'none',
+                        transform: 'scale(0.97)',
+                        boxShadow: '0 0 0 2px #a5b4fc',
                         '& .iconZoom': {
-                          transform: 'scale(1.4)', // icon grows
+                          transform: 'scale(1.3)',
                         },
                       },
                     }}
@@ -166,30 +140,27 @@ const MenuPage = () => {
                       sx={{
                         transition: 'transform 0.3s ease',
                         display: 'flex',
-                        color: 'rgb(63, 126, 220) ',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '2rem', // Adjust as needed
+                        color: 'rgb(48, 45, 102)',
+                        fontSize: '2.5rem',
                       }}
                     >
                       {React.cloneElement(item.icon, { fontSize: 'inherit' })}
                     </Box>
 
-
                     <Typography
                       variant="body1"
                       sx={{
-                        fontSize: '1.25rem',
-                        color: '#1B374C ',
+                        fontSize: '1.2rem',
+                        color: ' #1E293B',
                         textAlign: 'center',
-                        marginTop: 1,
+                        mt: 1,
                       }}
                     >
                       {item.text}
                     </Typography>
                   </Paper>
-
-
                 </Fade>
               </Grid>
             );

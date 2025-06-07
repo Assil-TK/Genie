@@ -1,11 +1,32 @@
 import React, { useState } from "react";
-import {TextField,Button,Box,Card,CardContent,Typography, Snackbar, Alert} from "@mui/material";
+import logoWhite from "../assets/logoWhite.png";
+import { keyframes } from "@mui/system";
+import {
+  TextField,
+  Button,
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser, loginUser } from "../services/api";
 import LoginButton from "../components/LoginButton";
 
 const ADMIN_EMAIL = "pfeplatformisimahdia@gmail.com";
-
+const gradientMove = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
 const AuthPage = ({ onLogin = () => {} }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,11 +49,11 @@ const AuthPage = ({ onLogin = () => {} }) => {
     try {
       if (isRegister) {
         if (isAdmin) {
-        setSnackbar({
+          setSnackbar({
             open: true,
             message: "L'admin ne peut pas s'inscrire.",
             severity: "warning",
-          });          
+          });
           return;
         }
 
@@ -41,7 +62,7 @@ const AuthPage = ({ onLogin = () => {} }) => {
           open: true,
           message: "Inscription réussie. Veuillez vous connecter.",
           severity: "success",
-        });        
+        });
         setIsRegister(false);
         setFormData({ username: "", email: "", password: "" });
       } else {
@@ -61,7 +82,7 @@ const AuthPage = ({ onLogin = () => {} }) => {
         error.response?.data?.message ||
         error.response?.data?.error ||
         "Une erreur est survenue.";
-        setSnackbar({
+      setSnackbar({
         open: true,
         message: "Erreur : " + errorMessage,
         severity: "error",
@@ -77,25 +98,78 @@ const AuthPage = ({ onLogin = () => {} }) => {
   return (
     <Box
       sx={{
-        backgroundImage: "url('/assets/images/webdevelopment-.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        position: "relative",
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         px: 2,
+        overflow: "hidden",
+        background: 'linear-gradient(-45deg, #1e3c72,rgb(244, 162, 31), #84a5e4,rgb(246, 205, 123))',
+backgroundSize: '400% 400%',
+animation: `${gradientMove} 15s ease infinite`,
+
       }}
     >
+      {/* Animated blob SVG */}
+      <Box
+        component="svg"
+        viewBox="0 0 800 600"
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: "200%",
+          height: "200%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 0,
+          opacity: 0.18,
+        }}
+      >
+        <path fill="white">
+          <animate
+            attributeName="d"
+            dur="8s"
+            repeatCount="indefinite"
+            values="
+              M421.5 115.5C508.5 145 637 184.5 645.5 263.5C654 342.5 542 384.5 468 439.5C394 494.5 357.5 572.5 287.5 563.5C217.5 554.5 169.5 458.5 134.5 375C99.5 291.5 77.5 221.5 123.5 163C169.5 104.5 334.5 86 421.5 115.5Z;
+              M400 140C480 160 620 190 630 270C640 350 530 390 450 450C370 510 340 580 270 570C200 560 150 470 120 390C90 310 60 230 110 160C160 90 320 120 400 140Z;
+              M421.5 115.5C508.5 145 637 184.5 645.5 263.5C654 342.5 542 384.5 468 439.5C394 494.5 357.5 572.5 287.5 563.5C217.5 554.5 169.5 458.5 134.5 375C99.5 291.5 77.5 221.5 123.5 163C169.5 104.5 334.5 86 421.5 115.5Z
+            "
+          />
+        </path>
+      </Box>
+      <Box
+  sx={{
+    position: "absolute",
+    top: 20,
+    left: 40,
+    zIndex: 2,
+  }}
+>
+  <img
+    src={logoWhite}
+    alt="Logo"
+    style={{
+      height: "40px",
+      objectFit: "contain",
+    }}
+  />
+</Box>
+
+
+      {/* Auth Card (unchanged) */}
       <Card
         sx={{
           width: { xs: "100%", sm: 400 },
           maxHeight: 600,
           backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(255, 255, 255, 0.56)",
+          backgroundColor: "rgba(255, 255, 255, 0.33)",
           boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
           borderRadius: 3,
           p: 3,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <CardContent>
@@ -104,7 +178,7 @@ const AuthPage = ({ onLogin = () => {} }) => {
             sx={{
               textAlign: "center",
               fontWeight: "bold",
-              color: "#1B374C",
+              color: "rgb(27, 55, 97)",
               mb: 1,
             }}
           >
@@ -205,16 +279,17 @@ const AuthPage = ({ onLogin = () => {} }) => {
           </Box>
         </CardContent>
       </Card>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
           severity={snackbar.severity}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
-          sx={{ width: '100%', fontFamily: 'Poppins' }}
+          sx={{ width: "100%", fontFamily: "Poppins" }}
         >
           {snackbar.message}
         </Alert>

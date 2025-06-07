@@ -1,19 +1,26 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useState } from 'react'; // 🆕 Added useState here
+import React, { useEffect, useState } from 'react';
 import { Box, Fade, Button, Typography } from '@mui/material';
-import { keyframes } from '@emotion/react';
+import { keyframes, css } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
 import gifAnimation from '../../assets/orangee.gif';
-import staticImage from '../../assets/orangee.png'; // 🆕 Added PNG fallback
+import staticImage from '../../assets/orangee.png';
 
-// Background animation
 const gradientMove = keyframes`
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 `;
 
-// Entrance animation from left
+const floatMotion = keyframes`
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 5px); }
+  50% { transform: translate(3px, -5px); }
+  75% { transform: translate(-2px, 4px); }
+  100% { transform: translate(0, 0); }
+`;
+
+
 const slideFadeIn = keyframes`
   from {
     opacity: 0;
@@ -25,7 +32,6 @@ const slideFadeIn = keyframes`
   }
 `;
 
-// Entrance animation from bottom
 const slideUpFadeIn = keyframes`
   from {
     opacity: 0;
@@ -39,18 +45,17 @@ const slideUpFadeIn = keyframes`
 
 const WelcomeScreen = () => {
   const navigate = useNavigate();
-  const [showGif, setShowGif] = useState(true); // 🆕 Added showGif state
+  const [showGif, setShowGif] = useState(true);
 
   useEffect(() => {
     const originalBackground = document.body.style.backgroundColor;
     document.body.style.backgroundColor = '#f0f9ff';
 
-    // 🆕 Set timeout to switch image
-    const timer = setTimeout(() => setShowGif(false), 5000);
+    const timer = setTimeout(() => setShowGif(false), 4900);
 
     return () => {
       document.body.style.backgroundColor = originalBackground;
-      clearTimeout(timer); // 🆕 Cleanup
+      clearTimeout(timer);
     };
   }, []);
 
@@ -67,7 +72,7 @@ const WelcomeScreen = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           px: { xs: 2, md: 10 },
-          background: 'linear-gradient(-45deg, #1e3c72, #2a5298, #a5c5ff, #3b6dca)',
+          background: 'linear-gradient(-45deg, #1e3c72,rgb(24, 51, 98),rgb(77, 110, 170),rgb(24, 61, 102))',
           backgroundSize: '400% 400%',
           animation: `${gradientMove} 25s ease infinite`,
           fontFamily: 'Poppins, sans-serif',
@@ -76,41 +81,10 @@ const WelcomeScreen = () => {
           overflow: 'hidden',
         }}
       >
-        
-
-        {/* Animated blob SVG */}
-        <Box
-          component="svg"
-          viewBox="0 0 800 600"
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '200%',
-            height: '200%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 0,
-            opacity: 0.12,
-          }}
-        >
-          <path fill="white">
-            <animate
-              attributeName="d"
-              dur="15s"
-              repeatCount="indefinite"
-              values="
-                M421.5 115.5C508.5 145 637 184.5 645.5 263.5C654 342.5 542 384.5 468 439.5C394 494.5 357.5 572.5 287.5 563.5C217.5 554.5 169.5 458.5 134.5 375C99.5 291.5 77.5 221.5 123.5 163C169.5 104.5 334.5 86 421.5 115.5Z;
-                M400 140C480 160 620 190 630 270C640 350 530 390 450 450C370 510 340 580 270 570C200 560 150 470 120 390C90 310 60 230 110 160C160 90 320 120 400 140Z;
-                M421.5 115.5C508.5 145 637 184.5 645.5 263.5C654 342.5 542 384.5 468 439.5C394 494.5 357.5 572.5 287.5 563.5C217.5 554.5 169.5 458.5 134.5 375C99.5 291.5 77.5 221.5 123.5 163C169.5 104.5 334.5 86 421.5 115.5Z
-              "
-            />
-          </path>
-        </Box>
-
-        {/* LEFT: Text & Button */}
         <Box
           sx={{
             zIndex: 2,
+            marginTop: -4,
             maxWidth: '50%',
             textAlign: 'left',
             ml: { xs: 2, md: 10 },
@@ -121,6 +95,7 @@ const WelcomeScreen = () => {
             fontWeight={700}
             sx={{
               mb: 2,
+              fontSize: '4.5rem' ,
               animation: `${slideFadeIn} 0.8s ease forwards`,
               animationDelay: '0.2s',
               textShadow: '2px 2px 6px rgba(0, 0, 0, 0.5)',
@@ -200,7 +175,7 @@ const WelcomeScreen = () => {
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  backgroundColor: 'rgb(107, 220, 143)',
+                  backgroundColor: 'rgb(6, 164, 56)',
                   transform: 'scale(1.05)',
                 },
               }}
@@ -210,28 +185,63 @@ const WelcomeScreen = () => {
           </Box>
         </Box>
 
-        {/* RIGHT: Image */}
         <Box
           sx={{
             width: '45%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 2,
+            zIndex: 1,
           }}
         >
           <img
-            src={showGif ? gifAnimation : staticImage}
-            alt="Visual"
+  src={showGif ? gifAnimation : staticImage}
+  alt="Visual"
+  css={css`
+    width: 110%;
+    max-width: 560px;
+    height: auto;
+    margin-top: -1px;
+    filter: drop-shadow(0 0 12px rgba(42, 46, 68, 0.52));
+    transition: opacity 0.5s ease-in-out;
+    ${!showGif &&
+    css`
+      animation: ${floatMotion} 7s ease-in-out infinite;
+    `}
+  `}
+/>
+
+
+        </Box>
+
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: '120px',
+            zIndex: 1,
+            overflow: 'hidden',
+            lineHeight: 0,
+          }}
+        >
+          <svg
+            viewBox="0 0 500 150"
+            preserveAspectRatio="none"
             style={{
-              width: '110%',
-              maxWidth: '560px',
-              height: 'auto',
-              marginTop: '40px',
-              filter: 'drop-shadow(0 0 12px rgba(42, 46, 68, 0.52))',
-              transition: 'opacity 0.5s ease-in-out',
+              height: '100%',
+              width: '100%',
             }}
-          />
+          >
+            <path
+              d="M0.00,49.98 C150.00,150.00 349.91,-49.98 500.00,49.98 L500.00,150.00 L0.00,150.00 Z"
+              style={{
+                stroke: 'none',
+                fill: 'rgba(255,255,255,0.1)',
+              }}
+            />
+          </svg>
         </Box>
       </Box>
     </Fade>
