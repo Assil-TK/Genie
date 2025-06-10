@@ -188,7 +188,7 @@ const ProjectDeploy = () => {
                 <Header />
 
                 <Box sx={{ p: 10,marginLeft:4 }}>
-                    <Typography variant="h5" sx={{ color: "#F39325", fontFamily: "Poppins", mb: 3, marginTop:3}}>
+                    <Typography variant="h5" sx={{ color: " #F39325", fontFamily: "Poppins", mb: 3, marginTop:3}}>
                         Déployer un projet
                     </Typography>
 

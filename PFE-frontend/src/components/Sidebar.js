@@ -10,7 +10,6 @@ import {
 import {
   Home as HomeIcon,
   Edit as EditIcon,
-  Settings as SettingsIcon,
   Add as AddIcon,
   WorkHistory as WorkHistoryIcon,
   FileUpload as FileUploadIcon,
@@ -52,7 +51,6 @@ const Sidebar = () => {
     { text: "Modification", icon: <EditIcon />, path: "/admin/editfile" },
     { text: "Télécharger", icon: <FileDownloadIcon />, path: "/admin/download" },
     { text: "Deployer", icon: <CloudUploadIcon />, path: "/admin/deploy" },
-    { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
     { text: "Journal d'activité", icon: <WorkHistoryIcon />, path: "/admin/my-history" },
   ];
 
@@ -69,8 +67,8 @@ const Sidebar = () => {
         "& .MuiDrawer-paper": {
           width: 60,
           overflowX: "hidden",
-          backgroundColor: 'rgba(247, 247, 247, 0.3)', // transparent background
-          backdropFilter: 'blur(10px)', // glass effect blur
+          backgroundColor: 'rgba(247, 247, 247, 0.3)',
+          backdropFilter: 'blur(10px)',
           borderRight: '1px solid rgba(255,255,255,0.1)',
           boxShadow: 'none',
         },
@@ -82,7 +80,7 @@ const Sidebar = () => {
           flexDirection: 'column',
           height: '100%',
           marginTop: '75px',
-          gap: 1, // smaller gap to avoid scrollbar
+          gap: 1,
         }}
       >
         {menuItems.map((item, index) => (
@@ -92,13 +90,13 @@ const Sidebar = () => {
               onClick={() => handleNavigation(item.path)}
               sx={{
                 justifyContent: 'center',
-                paddingY: '6px', // less vertical padding for tighter spacing
+                paddingY: '6px',
               }}
             >
               <ListItemIcon
                 sx={{
                   minWidth: 'auto',
-                  backgroundColor: 'rgba(0, 0, 0, 0.1)', // subtle circular background
+                  backgroundColor: 'rgba(0, 0, 0, 0.1)',
                   borderRadius: '50%',
                   padding: 1,
                   color: '#444',
@@ -119,10 +117,10 @@ const Sidebar = () => {
         ))}
 
         <Box sx={{ marginTop: 'auto' }}>
-          <Tooltip title="Paramètres" placement="right">
+          <Tooltip title="Avis" placement="right">
             <ListItem
               button
-              onClick={() => handleNavigation("/Parametres")}
+              onClick={() => handleNavigation("/admin/avis")}
               sx={{ justifyContent: 'center', paddingY: '6px' }}
             >
               <ListItemIcon
@@ -141,7 +139,7 @@ const Sidebar = () => {
                   },
                 }}
               >
-                <SettingsIcon />
+                <CommentIcon />
               </ListItemIcon>
             </ListItem>
           </Tooltip>

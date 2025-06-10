@@ -52,40 +52,78 @@ const ProjectDeploy = () => {
     }
   };
 
-  const renderStatusChip = (status) => {
-    switch (status) {
-      case "pending":
-        return <Chip label="En cours" color="warning" />;
-      case "success":
-        return <Chip label="Succès" color="success" />;
-      case "error":
-        return <Chip label="Erreur" color="error" />;
-      default:
-        return <Chip label="Inconnu" />;
-    }
-  };
+ const renderStatusChip = (status) => {
+  switch (status) {
+    case "pending":
+      return (
+        <Chip
+          label="Pas encore déployé"
+          sx={{
+            bgcolor: 'rgb(50, 125, 223)', // Blue
+            color: "#fff"
+          }}
+        />
+      );
+    case "success":
+      return <Chip label="Succès" color="success" />;
+    case "error":
+      return <Chip label="Erreur" color="error" />;
+    default:
+      return <Chip label="Inconnu" />;
+  }
+};
+
 
   return (
-    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
-      {/* Animated gradient background fixed and full screen */}
-      <Box
-        sx={{
-          position: 'fixed',
-          inset: 0,
-          background: 'linear-gradient(135deg, rgb(189, 200, 227), rgb(201, 209, 221), rgb(232, 220, 213))',
-          backgroundSize: '400% 400%',
-          animation: `${gradientBG} 15s ease infinite`,
-          zIndex: -1,
-        }}
-      />
+  <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+    {/* Animated background */}
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        background: 'linear-gradient(135deg, rgb(189, 200, 227), rgb(201, 209, 221), rgb(232, 220, 213))',
+        backgroundSize: '400% 400%',
+        animation: `${gradientBG} 15s ease infinite`,
+        zIndex: -1,
+      }}
+    />
 
-      {/* Main content container */}
-      <Box sx={{ p: 10, position: 'relative', zIndex: 1 }}>
+    {/* Main centered container */}
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        px: 2,
+        py: 7,
+        position: 'relative',
+        zIndex: 1,
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          p: 6,
+          borderRadius: 4,
+          width: '90%',
+          maxWidth: 1600,
+          height: 'auto',
+          bgcolor: 'rgba(255, 255, 255, 0.95)',
+          textAlign: 'center',
+          overflow: 'auto',
+        }}
+      >
         <Typography
-          variant="h4"
-          align="center"
-          sx={{ color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}
-        >
+                    variant="h4"
+                    sx={{
+                      color: "#F39325",
+                      fontFamily: "Poppins",
+                      mb: 8,
+                      fontWeight: "bold",
+                      textAlign: "center"
+                    }}
+                  >
           Déployer un projet
         </Typography>
 
@@ -130,7 +168,7 @@ const ProjectDeploy = () => {
                     <TableCell align="right">
                       <Button
                         disabled={deploying[project.name]}
-                        sx={{ backgroundColor: "#89A4C7", color: "black", fontFamily: "Poppins" }}
+                        sx={{ backgroundColor: "rgb(20, 158, 54)", color: "white", fontFamily: "Poppins" }}
                         onClick={() => handleDeploy(project.userId, project.name)}
                       >
                         {deploying[project.name] ? "Déploiement..." : "Déployer"}
@@ -160,9 +198,11 @@ const ProjectDeploy = () => {
             {snackbar.message}
           </Alert>
         </Snackbar>
-      </Box>
+      </Paper>
     </Box>
-  );
+  </Box>
+);
+
 };
 
 export default ProjectDeploy;

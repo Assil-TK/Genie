@@ -66,6 +66,7 @@ const PageSelector = () => {
             bgcolor: 'rgba(255, 255, 255, 0.95)',
             textAlign: 'center',
             overflow: 'auto',
+            height: '90vh',
             ml: { xs: 0, md: '1%' },
             mr: { xs: 0, md: '-4%' },
             boxShadow: `0px 3px 5px -1px rgba(0,0,0,0.2),
