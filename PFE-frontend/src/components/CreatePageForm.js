@@ -183,7 +183,7 @@ export default function CreatePageForm() {
           disabled={loading}
           disableElevation
           sx={{
-            backgroundColor: loading ? '#888' : '#1976d2',
+            backgroundColor: loading ? ' #888' : 'rgb(22, 195, 51)',
             color: 'white',
             padding: '0.6rem 1.5rem',
             borderRadius: '8px',
@@ -191,7 +191,7 @@ export default function CreatePageForm() {
             cursor: loading ? 'not-allowed' : 'pointer',
             textTransform: 'none',
             '&:hover': {
-              backgroundColor: loading ? '#888' : '#1565c0',
+              backgroundColor: loading ? '#888' : 'rgb(15, 154, 43)',
             },
           }}
         >
@@ -206,6 +206,7 @@ export default function CreatePageForm() {
               marginTop: '2rem',
               marginBottom: '2rem',
               marginLeft: '-10rem',
+              
               fontFamily: 'Fira Sans, sans-serif',
               color: 'grey',
               textAlign: 'left',
@@ -218,9 +219,9 @@ export default function CreatePageForm() {
           <div
             style={{
               display: 'flex',
-              width: '171%',
+              width: '165%',
               gap: '2rem',
-              marginLeft: '-14rem',
+              marginLeft: '-15rem',
               justifyContent: 'space-between',
               alignItems: 'stretch',
               flexWrap: 'nowrap',
@@ -314,7 +315,7 @@ export default function CreatePageForm() {
           onClick={handleCreatePage}
           disabled={!code || loading}
           sx={{
-            backgroundColor: code ? '#4caf50' : '#ccc',
+            backgroundColor: code ? ' #4caf50' : '#ccc',
             color: 'white',
             padding: '0.6rem 1.2rem',
             borderRadius: '8px',

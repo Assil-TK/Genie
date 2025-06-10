@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
-
+import orangeIcon from '../assets/orangee.png';
 
 
 
@@ -309,22 +309,29 @@ Style visuel : ${formData.style}, framework ou librairie : ${formData.framework}
     return (
         <>
             <div
-                onClick={() => setShowForm(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    backgroundColor: '#facc15',
-                    borderRadius: '50%',
-                    padding: '15px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                    zIndex: 1000,
-                }}
-                title="Génération IA"
-            >
-                <Sparkles />
-            </div>
+    onClick={() => setShowForm(true)}
+    style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        cursor: 'pointer',
+        zIndex: 1000,
+    }}
+    title="Génération IA"
+>
+    <img
+    src={orangeIcon}
+    alt="AI Logo"
+    style={{
+        width: '90px',
+        height: '90px',
+        objectFit: 'contain',
+        filter: 'drop-shadow(1 1px 4px rgba(42, 46, 68, 0.31))',
+    }}
+/>
+
+</div>
+
 
             {showForm && (
                 <div

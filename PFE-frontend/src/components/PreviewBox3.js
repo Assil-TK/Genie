@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import lampGif from '../assets/stars.gif'; // Make sure the path is correct
+import React from 'react';
 
 const PreviewBox = () => {
-  const [showIframe, setShowIframe] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowIframe(true);
-    }, 7000); // ⏱️ Show iframe after 5 seconds
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div
       style={{
@@ -26,25 +15,13 @@ const PreviewBox = () => {
         justifyContent: 'center',
       }}
     >
-      {showIframe ? (
-        <iframe
-          src="http://localhost:3000/filecontent3"
-          title="Live Preview"
-          width="100%"
-          height="100%"
-          style={{ border: 'none', display: 'block' }}
-        />
-      ) : (
-        <img
-          src={lampGif}
-          alt="Loading animation"
-          style={{
-            width: '200px', // 🎯 Control width here
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-        />
-      )}
+      <iframe
+        src="http://localhost:3000/filecontent3"
+        title="Live Preview"
+        width="100%"
+        height="100%"
+        style={{ border: 'none', display: 'block' }}
+      />
     </div>
   );
 };

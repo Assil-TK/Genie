@@ -94,7 +94,7 @@ const EditablePreview = ({ pageName, projectName }) => {
         return;
     }
 
-    setLoading(true); // ✅ Start loading
+    setLoading(true); // Start loading
     try {
         const prompt = `
 Voici un code d'une application React. Veuillez modifier ce code en fonction des instructions suivantes.
@@ -131,7 +131,7 @@ ${modifiedCode}
         console.error("Erreur IA :", err);
         setError("Erreur lors de la génération avec l'IA.");
     } finally {
-        setLoading(false); // ✅ End loading
+        setLoading(false); // End loading
     }
 };
 
@@ -146,17 +146,27 @@ ${modifiedCode}
     };
 
     return (
-        <Box sx={{ marginTop: '2rem' }}>
-            <Typography variant="h6">Décrire ce que vous souhaitez modifier</Typography>
-            <Box sx={{ position: 'relative', marginBottom: '1rem' }}>
+        <Box sx={{ marginTop: '4rem' }}>
+            <Typography variant="h6" fontFamily="Poppins, sans-serif" gutterBottom textAlign="center" color='#1B374C'>Décrire ce que vous souhaitez modifier</Typography>
+            <Box sx={{ position: 'relative', marginBottom: '1rem', width: '60%', ml: '15rem' }}>
   <TextField
     fullWidth
     multiline
     rows={4}
     value={instructions}
     onChange={(e) => setInstructions(e.target.value)}
-    placeholder="Ex : Ajoute une image au-dessus du titre"
+    placeholder="Ex: Ajoute un bouton au-dessus de titre"
+    sx={{
+      mt:'1rem',
+      backgroundColor: '#fff',
+      borderRadius: '10px',
+      '& .MuiOutlinedInput-root': {
+        borderRadius: '10px', // Also applies radius to the input box
+      },
+    }}
   />
+
+
   <Box sx={{ position: 'absolute', bottom: 10, right: 10 }}>
     <ImageUploadButton
         pageName={pageName}
@@ -171,31 +181,40 @@ ${modifiedCode}
 </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                <Button
-                    onClick={handleGenerateCode}
-                    disabled={!originalCode || !instructions || loading}
-                    variant="contained"
-                    sx={{
-                        borderRadius: '20px',
-                        padding: '10px 30px',
-                        backgroundColor: "#1B374C"
-                    }}
-                >
-                    {loading ? 'Processing...' : 'Générer via IA'}
-                </Button>
-            </Box>
+  <Button
+    onClick={handleGenerateCode}
+    disabled={!originalCode || !instructions || loading}
+    variant="contained"
+    disableElevation
+    sx={{
+      backgroundColor: loading ? '#888' : 'rgb(22, 195, 51)',
+      color: 'white',
+      padding: '0.6rem 1.5rem',
+      borderRadius: '8px',
+      fontWeight: 'bold',
+      cursor: loading ? 'not-allowed' : 'pointer',
+      textTransform: 'none',
+      '&:hover': {
+        backgroundColor: loading ? '#888' : 'rgb(15, 154, 43)',
+      },
+    }}
+  >
+    {loading ? 'En cours...' : 'Générer via IA'}
+  </Button>
+</Box>
+
 
             {error && <div style={{ color: 'red', marginTop: '1rem' }}>{error}</div>}
             {successMsg && <div style={{ color: 'green', marginTop: '1rem' }}>{successMsg}</div>}
 
-            <Typography variant="h6" sx={{ marginTop: '2rem' }}>Contenu du fichier</Typography>
+            <Typography variant="h6" sx={{ marginTop: '4rem', ml:'-56rem' }}>Contenu du fichier :</Typography>
 
-            <Box sx={{ display: 'flex', gap: '2rem', marginTop: '1rem', height: '600px', width: '100%' }}>
+            <Box sx={{ display: 'flex', gap: '2rem', marginTop: '2rem', height: '600px', width: '100%' }}>
                 <Box
                     sx={{
                         resize: 'horizontal',
                         overflow: 'auto',
-                        minWidth: '400px',
+                        minWidth: '100px',
                         maxWidth: '75%',
                         border: '1px solid #ccc',
                         borderRadius: '8px',
@@ -207,7 +226,7 @@ ${modifiedCode}
                         onChange={async (e) => {
                             const newValue = e.target.value;
                             setModifiedCode(newValue);
-                            setLoading(true); // ✅ Start loading during auto-sync
+                            setLoading(true); // Start loading during auto-sync
                             try {
                                 const exactPath = getExactPath();
                                 if (!exactPath) {
@@ -222,7 +241,7 @@ ${modifiedCode}
                                 console.error("Erreur de synchronisation automatique :", err);
                                 setError("Erreur de synchronisation automatique.");
                             } finally {
-                                setLoading(false); // ✅ End loading
+                                setLoading(false); // End loading
                             }
                         }}
                         style={{
@@ -243,14 +262,14 @@ ${modifiedCode}
                 </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '4rem', mb:'2rem' }}>
                 <Button
                     onClick={handleSave}
                     variant="contained"
                     sx={{
                         borderRadius: '20px',
                         padding: '10px 30px',
-                        backgroundColor: "#F39325"
+                        backgroundColor: "rgb(25, 108, 176)"
                     }}
                 >
                     Sauvegarder les modifications

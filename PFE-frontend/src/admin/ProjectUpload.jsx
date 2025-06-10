@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import animation from '../assets/Animation1.gif';
-
 import {
   Button,
   Box,
@@ -11,7 +9,14 @@ import {
   Stack,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { keyframes } from '@mui/material/styles';
 import { uploadProjectZip } from '../services/api';
+
+const gradientBG = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
 
 const ProjectUpload = () => {
   const [file, setFile] = useState(null);
@@ -49,8 +54,8 @@ const ProjectUpload = () => {
   };
 
   return (
-    <>
-      {/* Background GIF */}
+    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+      {/* Animated Background */}
       <Box
         sx={{
           position: 'fixed',
@@ -58,68 +63,106 @@ const ProjectUpload = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundImage: `url(${animation})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
+          background: 'linear-gradient(135deg, rgb(189, 200, 227), rgb(201, 209, 221), rgb(232, 220, 213))',
+          backgroundSize: '400% 400%',
+          animation: `${gradientBG} 15s ease infinite`,
           zIndex: -1,
         }}
       />
 
-      {/* Foreground content */}
-      <Box sx={{ minHeight: "100vh", display: 'flex', justifyContent: 'center', alignItems: 'center', px: 2 }}>
+      {/* Main Content */}
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          px: 2,
+        }}
+      >
         <Paper
-          elevation={4}
-          align="center"
+          elevation={6}
           sx={{
-            p: 5,
+            p: 4,
             borderRadius: 4,
             width: '100%',
-            maxWidth: 600,
-            textAlign: "center",
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', // Optional: to make text readable
+            maxWidth: 580,
+            textAlign: 'center',
+            bgcolor: 'rgba(255, 255, 255, 0.8)',
+            marginTop:'-3rem',
           }}
         >
-          <Typography variant="h4" align='center' sx={{ color: "#F5B17B", fontFamily: "Poppins", mb: 3 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: '#F39325',
+              fontSize:'2rem',
+              fontFamily: 'Fira Sans, sans-serif',
+              fontWeight: 600,
+              mb: 5,
+            }}
+          >
             Importer un projet local
           </Typography>
 
-          <Stack spacing={2}>
-            <Typography variant="body1" sx={{ fontFamily: "Poppins", color: "#89A4C7" }}>
-              Importez un projet React compressé au format <strong>.zip</strong>.
-            </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: '#5f6c7b', fontFamily: 'Poppins', mb: 3 }}
+          >
+            Téléversez un projet React compressé au format <strong>.zip</strong>.
+          </Typography>
 
-            <input
-              type="file"
-              accept=".zip"
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-              id="upload-zip"
-            />
+          <input
+            type="file"
+            accept=".zip"
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+            id="upload-zip"
+          />
 
+          <Stack spacing={2} alignItems="center">
             <label htmlFor="upload-zip">
               <Button
                 variant="outlined"
                 component="span"
-                sx={{ color: "#1B374C" }}
                 startIcon={<CloudUploadIcon />}
+                sx={{
+                  borderColor: '#1B374C',
+                  color: '#1B374C',
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  ':hover': {
+                    borderColor: '#1B374C',
+                    backgroundColor: ' #f0f4f8',
+                  },
+                }}
               >
                 Choisir un fichier ZIP
               </Button>
             </label>
 
             {file && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: '#7a8a9e' }}>
                 Fichier sélectionné : <strong>{file.name}</strong>
               </Typography>
             )}
 
-            {uploading && <LinearProgress />}
+            {uploading && <LinearProgress sx={{ width: '100%' }} />}
 
             <Button
-              sx={{ backgroundColor: "#89A4C7", color: "black" }}
+              variant="contained"
               onClick={handleUpload}
               disabled={!file || uploading}
+              sx={{
+                backgroundColor: ' #1B374C',
+                color: 'white',
+                fontWeight: 500,
+                textTransform: 'none',
+                ':hover': {
+                  backgroundColor: '#142836',
+                },
+                width: '100%',
+              }}
             >
               Importer le projet
             </Button>
@@ -129,7 +172,7 @@ const ProjectUpload = () => {
           </Stack>
         </Paper>
       </Box>
-    </>
+    </Box>
   );
 };
 

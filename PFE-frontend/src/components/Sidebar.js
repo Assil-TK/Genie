@@ -5,7 +5,6 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText,
   Tooltip
 } from "@mui/material";
 import {
@@ -14,10 +13,9 @@ import {
   Settings as SettingsIcon,
   Add as AddIcon,
   WorkHistory as WorkHistoryIcon,
-  FolderDelete as FolderDeleteIcon,
-  CloudUpload as CloudUploadIcon,
   FileUpload as FileUploadIcon,
   FileDownload as FileDownloadIcon,
+  CloudUpload as CloudUploadIcon,
   Comment as CommentIcon
 } from '@mui/icons-material';
 
@@ -54,7 +52,6 @@ const Sidebar = () => {
     { text: "Modification", icon: <EditIcon />, path: "/admin/editfile" },
     { text: "Télécharger", icon: <FileDownloadIcon />, path: "/admin/download" },
     { text: "Deployer", icon: <CloudUploadIcon />, path: "/admin/deploy" },
-    
     { text: "Avis", icon: <CommentIcon />, path: "/admin/avis" },
     { text: "Journal d'activité", icon: <WorkHistoryIcon />, path: "/admin/my-history" },
   ];
@@ -65,7 +62,6 @@ const Sidebar = () => {
       anchor="left"
       sx={{
         width: 60,
-        
         flexShrink: 0,
         position: 'fixed',
         zIndex: 1200,
@@ -73,23 +69,80 @@ const Sidebar = () => {
         "& .MuiDrawer-paper": {
           width: 60,
           overflowX: "hidden",
-          backgroundColor: '#f7f7f7',
+          backgroundColor: 'rgba(247, 247, 247, 0.3)', // transparent background
+          backdropFilter: 'blur(10px)', // glass effect blur
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: 'none',
         },
       }}
     >
-      <List sx={{ display: 'flex', flexDirection: 'column', height: '100%', marginTop: '64px' }}>
+      <List
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          marginTop: '75px',
+          gap: 1, // smaller gap to avoid scrollbar
+        }}
+      >
         {menuItems.map((item, index) => (
           <Tooltip title={item.text} placement="right" key={index}>
-            <ListItem button onClick={() => handleNavigation(item.path)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItem
+              button
+              onClick={() => handleNavigation(item.path)}
+              sx={{
+                justifyContent: 'center',
+                paddingY: '6px', // less vertical padding for tighter spacing
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 'auto',
+                  backgroundColor: 'rgba(0, 0, 0, 0.1)', // subtle circular background
+                  borderRadius: '50%',
+                  padding: 1,
+                  color: '#444',
+                  transition: 'background-color 0.3s, color 0.3s',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                    color: '#000',
+                  },
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
             </ListItem>
           </Tooltip>
         ))}
 
         <Box sx={{ marginTop: 'auto' }}>
           <Tooltip title="Paramètres" placement="right">
-            <ListItem button onClick={() => handleNavigation("/Parametres")}>
-              <ListItemIcon><SettingsIcon /></ListItemIcon>
+            <ListItem
+              button
+              onClick={() => handleNavigation("/Parametres")}
+              sx={{ justifyContent: 'center', paddingY: '6px' }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 'auto',
+                  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                  borderRadius: '50%',
+                  padding: 1,
+                  color: '#444',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                    color: '#000',
+                  },
+                }}
+              >
+                <SettingsIcon />
+              </ListItemIcon>
             </ListItem>
           </Tooltip>
         </Box>
