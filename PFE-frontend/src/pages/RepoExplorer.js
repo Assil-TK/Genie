@@ -3,21 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { fetchUser, fetchRepos, fetchFiles, fetchFileContent } from '../api/githubApi';
 import RepoSelector from '../components/RepoSelector';
 import FileTree from '../components/FileTree';
-import { Typography, Box, Divider } from '@mui/material';
+import { Typography, Box, Divider, Paper } from '@mui/material';
 import Sidebar from '../components/Sidebar copy';
 import Header from '../components/Header git';
-import animation from '../assets/Animation1.gif';
-import { keyframes } from '@mui/system';
+import { keyframes } from '@mui/material/styles';
 
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+const gradientBG = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 `;
 
 const RepoExplorer = () => {
@@ -31,7 +25,6 @@ const RepoExplorer = () => {
   const [openFolders, setOpenFolders] = useState({});
   const [loading, setLoading] = useState(false);
   const [previewComponent, setPreviewComponent] = useState(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -121,10 +114,8 @@ const RepoExplorer = () => {
 
   const handleDeleteFile = async (repo, filePath) => {
     if (!window.confirm(`Supprimer le fichier ${filePath} ?`)) return;
-
     const commitMessage = `Supprimer ${filePath} via l'application`;
     setLoading(true);
-
     try {
       const response = await fetch('http://localhost:5010/api/delete-file', {
         method: 'DELETE',
@@ -191,104 +182,107 @@ const RepoExplorer = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flexShrink: 0 }}>
-        <Header />
-      </Box>
+    <Box sx={{ position: 'relative', minHeight: '100vh' }}>
+      <Box
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          background: 'linear-gradient(135deg, rgb(189, 200, 227), rgb(201, 209, 221), rgb(232, 220, 213))',
+          backgroundSize: '400% 400%',
+          animation: `${gradientBG} 15s ease infinite`,
+          zIndex: -1,
+        }}
+      />
 
-      <Box sx={{ flexGrow: 1, display: 'flex', overflow: 'hidden' }}>
-        <Box sx={{ width: 40, borderRight: '1px solid #ddd', overflowY: 'auto' }}>
-          <Sidebar />
-        </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          px: 2,
+          py: 7,
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            p: 6,
+            borderRadius: 4,
+            width: '100%',
+            maxWidth: 1650,
+            height: 'auto',
+            bgcolor: 'rgba(255, 255, 255, 0.95)',
+            overflow: 'auto',
+            ml:'3rem',
+            mr:'-0.8rem'
+          }}
+        >
+          <Header />
+          <Box sx={{ display: 'flex' }}>
+            <Box sx={{ width: 40, overflowY: 'auto' }}>
+              <Sidebar />
+            </Box>
 
-        <Box
-  sx={{
-    flexGrow: 1,
-    p: 4,
-    overflowY: 'auto',
-    backgroundImage: `url(${animation})`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-  }}
->
-
-          <Box sx={{ mb: 3, marginTop: 15 }}>
-            <Typography
-              variant="h2"
-              sx={{
-                fontWeight: 'bold',
-                mb: 2,
-                fontFamily: 'Fira Sans, sans-serif',
-                color: 'orange',
-                animation: `${fadeInUp} 2s ease-out`,
-                textAlign: 'center',
-              }}
-            >
-              Bienvenue, {user?.username || user?.login}
-            </Typography>
-
-            <RepoSelector repos={repos} selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
-          </Box>
-
-          {selectedRepo && (
-            <>
-              <Divider sx={{ my: 3 }} />
+            <Box sx={{ flexGrow: 1, p: 4, overflowY: 'auto' }}>
               <Typography
-                variant="h5"
-                sx={{ fontFamily: 'Fira Sans, sans-serif', textAlign: 'center', fontWeight: 'medium', mb: 2, color: 'grey' }}
-              >
-                Arborescence du dépôt
-              </Typography>
-              <FileTree
-                files={fileTree}
-                openFolders={openFolders}
-                handleFileClick={handleFileClick}
-                handleEditClick={handleEditClick}
-                toggleFolder={toggleFolder}
-                handleDeleteFile={(filePath) => handleDeleteFile(selectedRepo, filePath)}
-                fileContent={fileContent}
-                handleNewFileClick={handleNewFileClick}
-              />
-            </>
-          )}
-
-          {selectedFile && (
-            <>
-              <Divider sx={{ my: 3 }} />
-              <Typography variant="h6" sx={{ mb: 1, mx: 'auto', width: '85%' }}>
-                Fichier : <code>{selectedFile}</code>
+                                      variant="h3"
+                                      sx={{
+                                        color: "#F39325",
+                                        fontFamily: "Poppins",
+                                        mb: 5,
+                                        fontWeight: "bold",
+                                        textAlign: "center"
+                                      }}
+                                    >
+                Bienvenue, {user?.username || user?.login}
               </Typography>
 
-              {fileType === 'text' ? (
-                <Box
-                  sx={{
-                    mx: 'auto',
-                    width: '85%',
-                    whiteSpace: 'pre-wrap',
-                    backgroundColor: '#f4f4f4',
-                    p: 2,
-                    borderRadius: 2,
-                    fontFamily: 'monospace',
-                    overflow: 'visible',
-                  }}
-                >
-                  {fileContent}
-                </Box>
-              ) : (
-                <Box sx={{ mx: 'auto', width: '85%' }}>
-                  {fileContent.startsWith('data:image/') ? (
-                    <img src={fileContent} alt="Aperçu" style={{ maxWidth: '100%' }} />
-                  ) : (
-                    <Typography>{fileContent}</Typography>
-                  )}
-                </Box>
+              <RepoSelector repos={repos} selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
+
+              {selectedRepo && (
+                <>
+                  <Divider sx={{ my: 3 }} />
+                  <Typography variant="h5" sx={{ fontFamily: 'Fira Sans, sans-serif', textAlign: 'center', fontWeight: 'medium', mb: 2, color: 'grey' }}>
+                    Arborescence du dépôt
+                  </Typography>
+
+                  <FileTree
+                    files={fileTree}
+                    openFolders={openFolders}
+                    handleFileClick={handleFileClick}
+                    handleEditClick={handleEditClick}
+                    toggleFolder={toggleFolder}
+                    handleDeleteFile={(filePath) => handleDeleteFile(selectedRepo, filePath)}
+                    fileContent={fileContent}
+                    handleNewFileClick={handleNewFileClick}
+                  />
+                </>
               )}
-            </>
-          )}
-        </Box>
+
+              {selectedFile && (
+                <>
+                  <Divider sx={{ my: 3 }} />
+                  <Typography variant="h6" sx={{ mb: 1 }}>
+                    Fichier : <code>{selectedFile}</code>
+                  </Typography>
+
+                  {fileType === 'text' ? (
+                    previewComponent ? (
+                      <previewComponent />
+                    ) : (
+                      <pre style={{ backgroundColor: '#f4f4f4', padding: '1rem', borderRadius: '8px' }}>{fileContent}</pre>
+                    )
+                  ) : (
+                    <img src={fileContent} alt="File preview" style={{ maxWidth: '100%', height: 'auto' }} />
+                  )}
+                </>
+              )}
+            </Box>
+          </Box>
+        </Paper>
       </Box>
     </Box>
   );
